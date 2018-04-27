@@ -29,8 +29,8 @@ class User
                 )) .
                 str_replace('/', '', substr(
                     $permission->resource,
-                    strlen($permission->resource) - 2,
-                    2
+                    strlen($permission->resource) - 1,
+                    1
                 ))] = self::hasPermission($permission->resource);
         }
 
