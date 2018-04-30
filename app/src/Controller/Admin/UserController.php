@@ -1,296 +1,151 @@
 <?php
 declare(strict_types=1);
-
-namespace Farol360\Ancora\Model;
-
+namespace Farol360\Ancora\Controller\Admin;
+use Farol360\Ancora\Controller;
 use Farol360\Ancora\Model;
-use Farol360\Ancora\Model\User;
-use RKA\Session;
-
-class UserModel extends Model
+use Farol360\Ancora\Model\EntityFactory;
+use Farol360\Ancora\User;
+use Fusonic\SpreadsheetExport\Spreadsheet;
+use Fusonic\SpreadsheetExport\ColumnTypes\DateColumn;
+use Fusonic\SpreadsheetExport\ColumnTypes\NumericColumn;
+use Fusonic\SpreadsheetExport\ColumnTypes\TextColumn;
+use Fusonic\SpreadsheetExport\Writers\OdsWriter;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Flash\Messages as FlashMessages;
+use Slim\Views\Twig as View;
+class UserController extends Controller
 {
-    public function add(User $user)
+    protected $entityFactory;
+    protected $roleModel;
+    protected $userModel;
+    public function __construct(
+        View $view,
+        FlashMessages $flash,
+        Model $user,
+        Model $role,
+        EntityFactory $entityFactory
+    ) {
+        parent::__construct($view, $flash);
+        $this->userModel = $user;
+        $this->roleModel = $role;
+        $this->entityFactory = $entityFactory;
+    }
+    public function index(Request $request, Response $response): Response
     {
-        $sql = "
-            INSERT INTO users (
-                email,
-                name,
-                password,
-                nascimento,
-                cpf,
-                tel_area,
-                tel_numero,
-                end_rua,
-                end_numero,
-                end_complemento,
-                end_bairro,
-                end_cidade,
-                end_estado,
-                end_cep,
-                role_id,
-                active,
-                deleted,
-                created_at,
-                updated_at
-            )
-            VALUES (
-                :email,
-                :name,
-                :password,
-                :nascimento,
-                :cpf,
-                :tel_area,
-                :tel_numero,
-                :end_rua,
-                :end_numero,
-                :end_complemento,
-                :end_bairro,
-                :end_cidade,
-                :end_estado,
-                :end_cep,
-                :role_id,
-                :active,
-                :deleted,
-                :created_at,
-                :updated_at
-            )
-        ";
-        $query = $this->db->prepare($sql);
-        $parameters = [
-            ':email' => $user->email,
-            ':name' => $user->name,
-            ':password' => $user->password,
-            ':role_id' => $user->role_id,
-            ':nascimento' => $user->nascimento,
-            ':cpf' => $user->cpf,
-            ':tel_area' => $user->tel_area,
-            ':tel_numero' => $user->tel_numero,
-            ':end_rua' => $user->end_rua,
-            ':end_numero' => $user->end_numero,
-            ':end_complemento' => $user->endComplemento,
-            ':end_bairro' => $user->end_bairro,
-            ':end_cidade' => $user->end_cidade,
-            ':end_estado' => $user->end_estado,
-            ':end_cep' => $user->end_cep,
-            ':active' => 1,
-            ':deleted' => 0,
-            ':created_at' => time(),
-            ':updated_at' => null
-        ];
-        if ($query->execute($parameters)) {
-            return $this->db->lastInsertId();
+        if ($request->getUri()->getPath() == '/admin/user/all') {
+            $pageTitle = 'Todos os usuários';
+            $users = $this->userModel->getAll();
         } else {
-            return null;
+            $pageTitle = 'Clientes';
+            $users = $this->userModel->getUsers();
         }
+        return $this->view->render($response, 'admin/user/index.twig', [
+            'users' => $users,
+            'page_title' => $pageTitle,
+        ]);
     }
-
-    public function delete(int $userId): bool
+    public function add(Request $request, Response $response): Response
     {
-        $sql = "DELETE FROM users WHERE id = :id";
-        $query = $this->db->prepare($sql);
-        $parameters = [':id' => $userId];
-        return $query->execute($parameters);
-    }
-
-    public function get(int $userId = null, string $email = "")
-    {
-        $session = new Session();
-        if (empty($userId) && empty($email) && !empty($session->get('user'))) {
-            $userId = (int)$session->user['id'];
+        if (empty($request->getParsedBody())) {
+            $roles = $this->roleModel->getAll();
+            return $this->view->render($response, 'admin/user/add.twig', [
+                'roles' => $roles,
+            ]);
         }
-        if (!empty($userId) || !empty($email)) {
-            $sql = "
-                SELECT
-                    users.*,
-                    roles.description AS role
-                FROM
-                    users
-                    LEFT JOIN roles ON roles.id = users.role_id
-                WHERE
-                    (users.id = :id OR users.email = :email)
-                    AND deleted != 1
-            ";
-            $stmt = $this->db->prepare($sql);
-            $parameters = [':id' => $userId, ':email' => $email];
-            $stmt->execute($parameters);
-            $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
-            return $stmt->fetch();
+        $user = $this->entityFactory->createUser($request->getParsedBody());
+        $this->userModel->add($user);
+        $this->flash->addMessage('success', 'Usuário adicionado com sucesso.');
+        return $this->httpRedirect($request, $response, '/admin/user');
+    }
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        $userId = intval($args['id']);
+        $currentUser = $this->userModel->get();
+        if ($userId == $currentUser->id) {
+            $this->flash->addMessage('danger', 'Não é possível remover seu próprio usuário.');
+            return $this->httpRedirect($request, $response, '/admin/user/all');
         }
-        return new User();
+        $this->userModel->delete((int)$userId);
+        $this->flash->addMessage('success', 'Usuário removido com sucesso.');
+        return $this->httpRedirect($request, $response, '/admin/user/all');
     }
-
-    public function getAll(int $offset = 0, int $limit = PHP_INT_MAX): array
+    public function edit(Request $request, Response $response, array $args): Response
     {
-        $sql = "
-            SELECT
-                users.*,
-                roles.name AS role
-            FROM
-                users
-                LEFT JOIN roles ON roles.id = users.role_id
-            WHERE
-                deleted != 1
-            LIMIT ? , ?
-        ";
-        $query = $this->db->prepare($sql);
-        $query->bindValue(1, $offset, \PDO::PARAM_INT);
-        $query->bindValue(2, $limit, \PDO::PARAM_INT);
-        $query->execute();
-        return $query->fetchAll();
-    }
-
-    public function getByEmail(string $email)
-    {
-        $sql = "
-            SELECT
-                users.*
-            FROM
-                users
-            WHERE
-                email = :email
-        ";
-        $stmt = $this->db->prepare($sql);
-        $parameters = [':email' => $email];
-        $stmt->execute($parameters);
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
-        return $stmt->fetch();
-    }
-
-    public function getUserCourses(int $userId): array
-    {
-        $sql = "
-            SELECT
-                courses.*
-            FROM
-                users
-                LEFT JOIN users_courses ON users_courses.user_id = users.id
-                INNER JOIN courses ON courses.id = users_courses.course_id
-            WHERE
-                users.id = :id
-        ";
-        $stmt = $this->db->prepare($sql);
-        $parameters = [':id' => $userId];
-        $stmt->execute($parameters);
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
-        return $stmt->fetchAll();
-    }
-
-    public function getUserOrders(int $userId): array
-    {
-        $sql = "
-            SELECT
-                orders.*,
-                courses.title AS course_name
-            FROM
-                users
-                LEFT JOIN orders ON orders.user_id = users.id
-                LEFT JOIN courses ON courses.id = orders.course_id
-            WHERE
-                users.id = :id
-                AND orders.transaction IS NOT NULL
-        ";
-        $stmt = $this->db->prepare($sql);
-        $parameters = [':id' => $userId];
-        $stmt->execute($parameters);
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
-        return $stmt->fetchAll();
-    }
-
-    public function getUsers(int $offset = 0, int $limit = PHP_INT_MAX): array
-    {
-        $sql = "
-            SELECT
-                users.*,
-                roles.description AS role
-            FROM
-                users
-                LEFT JOIN roles ON roles.id = users.role_id
-            WHERE
-                deleted != 1 AND roles.name = 'user'
-            LIMIT ? , ?
-        ";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(1, $offset, \PDO::PARAM_INT);
-        $stmt->bindValue(2, $limit, \PDO::PARAM_INT);
-        $stmt->execute();
-        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
-        return $stmt->fetchAll();
-    }
-
-    public function update(User $user): bool
-    {
-
-        $sql = "
-            UPDATE
-                users
-            SET
-        ";
-        if (!empty($password)) {
-            $sql .= "
-                password = :password,
-            ";
+        $userId = intval($args['id']);
+        $user = $this->userModel->get((int)$userId);
+        if (!$user) {
+            $this->flash->addMessage('danger', 'Usuário não encontrado.');
+            return $this->httpRedirect($request, $response, '/admin/user');
         }
-        $sql .= "
-                email = :email,
-                name = :name,
-                nascimento = :nascimento,
-                cpf = :cpf,
-                tel_area = :tel_area,
-                tel_numero = :tel_numero,
-                end_rua = :end_rua,
-                end_numero = :end_numero,
-                end_complemento = :end_complemento,
-                end_bairro = :end_bairro,
-                end_cidade = :end_cidade,
-                end_estado = :end_estado,
-                end_cep = :end_cep,
-                role_id = :role_id
-
-            WHERE
-                id = :id
-        ";
-        $query = $this->db->prepare($sql);
-        $parameters = [
-            ':id' => (int) $user->id,
-            ':email' => $user->email,
-            ':name' => $user->name,
-            ':password' => $user->password,
-            ':role_id' => $user->role_id,
-            ':nascimento' => $user->nascimento,
-            ':cpf' => $user->cpf,
-            ':tel_area' => $user->tel_area,
-            ':tel_numero' => $user->tel_numero,
-            ':end_rua' => $user->end_rua,
-            ':end_numero' => $user->end_numero,
-            ':end_complemento' => $user->endComplemento,
-            ':end_bairro' => $user->end_bairro,
-            ':end_cidade' => $user->end_cidade,
-            ':end_estado' => $user->end_estado,
-            ':end_cep' => $user->end_cep
-
-        ];
-        if (!empty($password)) {
-            $parameters[':password'] = password_hash($password, PASSWORD_DEFAULT);
-        }
-        return $query->execute($parameters);
+        $roles = $this->roleModel->getAll();
+        return $this->view->render($response, 'admin/user/edit.twig', [
+            'user' => $user,
+            'roles' => $roles
+        ]);
     }
-
-    public function verify(int $userId): bool
+    public function export(Request $request, Response $response)
     {
-        $sql = "
-            UPDATE
-                users
-            SET
-                recover_token = NULL,
-                verification_token = NULL,
-                active = 1
-            WHERE
-                id = :id
-        ";
-        $stmt = $this->db->prepare($sql);
-        $parameters = [
-            ':id' => $userId
-        ];
-        return $stmt->execute($parameters);
+        $export = new Spreadsheet();
+        $export->addColumn(new TextColumn('Nome'));
+        $export->addColumn(new TextColumn('Email'));
+        $export->addColumn(new DateColumn('Data do cadastro'));
+        $export->addColumn(new TextColumn('Cargo no sistema'));
+        $export->addColumn(new DateColumn('Data de nascimento'));
+        $export->addColumn(new TextColumn('CPF'));
+        $export->addColumn(new NumericColumn('DDD'));
+        $export->addColumn(new NumericColumn('Telefone'));
+        $export->addColumn(new TextColumn('Rua'));
+        $export->addColumn(new TextColumn('Número'));
+        $export->addColumn(new TextColumn('Complemento'));
+        $export->addColumn(new TextColumn('Bairro'));
+        $export->addColumn(new TextColumn('Cidade'));
+        $export->addColumn(new TextColumn('Estado'));
+        $export->addColumn(new TextColumn('CEP'));
+        $users = $this->userModel->getAll();
+        foreach ($users as $user) {
+            $export->addRow([
+                $user->name,
+                $user->email,
+                $user->created_at,
+                $user->role,
+                $user->nascimento,
+                $user->cpf,
+                $user->tel_area,
+                $user->tel_numero,
+                $user->end_rua,
+                $user->end_numero,
+                $user->end_complemento,
+                $user->end_bairro,
+                $user->end_cidade,
+                $user->end_estado,
+                $user->end_cep,
+            ]);
+        }
+        $writer = new OdsWriter();
+        $writer->includeColumnHeaders = true;
+        // TODO: Refatorar para usar PSR-7
+        $export->download($writer, 'Usuários-' . time());
+    }
+    public function view(Request $request, Response $response, array $args): Response
+    {
+        $userId = intval($args['id']);
+        $user = $this->userModel->get((int)$userId);
+        if (!$user) {
+            $this->flash->addMessage('danger', 'Usuário não encontrado.');
+            return $this->httpRedirect($request, $response, '/admin/user');
+        }
+        $roles = $this->roleModel->getAll();
+        return $this->view->render($response, 'admin/user/view.twig', [
+            'user' => $user,
+            'roles' => $roles
+        ]);
+    }
+    public function update(Request $request, Response $response): Response
+    {
+        $user = $this->entityFactory->createUser($request->getParsedBody());
+        $this->userModel->update($user);
+        $this->flash->addMessage('success', 'Usuário atualizado com sucesso.');
+        return $this->httpRedirect($request, $response, '/admin/user/all');
     }
 }
