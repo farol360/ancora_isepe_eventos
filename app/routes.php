@@ -48,10 +48,6 @@ $app->group('/admin', function () {
     });
 });
 
-$app->map(['GET', 'POST'], '/contato', Page::class . ':contato');
-
-$app->get('/obrigado', Page::class . ':contatoObrigado');
-
 $app->group('/users', function () {
     $this->get('/dashboard', User::class . ':dashboard');
     $this->map(['GET', 'POST'], '/profile', User::class . ':profile');

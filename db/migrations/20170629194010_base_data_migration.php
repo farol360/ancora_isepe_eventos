@@ -179,16 +179,6 @@ class BaseDataMigration extends AbstractMigration
                 'resource' => '/users/verify/:token',
                 'description' => 'Verificar conta',
                 'role_id' => 1,
-            ],
-            [
-                'resource' => '/contato',
-                'description' => 'Página de contato',
-                'role_id' => 1,
-            ],
-            [
-                'resource' => '/obrigado',
-                'description' => 'Página agradecimento de contato',
-                'role_id' => 1,
             ]
         ];
         $this->insert('permissions', $permissions);

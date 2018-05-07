@@ -50,7 +50,7 @@ return [
         'version' => getenv('VERSION'),
         'stage' => getenv('STAGE'),
         'date' => getenv('DATE'),
-        'branch' => getebv('BRANCH'),
+        'branch' => getenv('BRANCH'),
         'repository' => getenv('REPOSITORY'),
         'repository_link' => getenv('REPOSITORY_LINK')
     ]
