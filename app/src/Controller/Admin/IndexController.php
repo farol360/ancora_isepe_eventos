@@ -28,8 +28,8 @@ class IndexController extends Controller
         return $this->view->render($response, 'admin/dashboard/index.twig');
     }
 
-    public function sobre(Request $request, Response $response): Response
+    public function about(Request $request, Response $response): Response
     {
-        return $this->view->render($response, 'admin/dashboard/sobre.twig', ['version' => $this->version]);
+        return $this->view->render($response, 'admin/dashboard/about.twig', ['version' => $this->version]);
     }
 }
