@@ -61,7 +61,7 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 2,
             ],
             [
-                'resource' => '/admin/about',
+                'resource' => '/admin/sobre',
                 'description' => 'Página Sobre',
                 'role_id' => 2,
             ],
