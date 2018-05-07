@@ -1,0 +1,24 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Administração - {{ parent() }}{% endblock %}
+{% set nav_active = 'dashboard' %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li class="active">Início</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+
+<div class="main">
+  <h3>{{ version.version }}</h3>
+  <p>Essta é uma página Sobre para o seu projeto. Edite todas as informações conforme achar conveniente. É interessante manter uma página como esta para ajudar a controlar a versão e disponibilizar esta informação ao cliente.</p>
+  <p><strong>Versão Atual:</strong> {{ version.version }}</p>
+  <p><strong>Etapa do Projeto:</strong> {{ version.stage }}</p>
+  <p><strong>Data:</strong> {{ version.date }}</p>
+  <p><strong>Branch:</strong> {{ version.branch }}</p>
+  <p><strong>Repositório:</strong> <a href="{{ version.repository }}">{{ version.repository }}</a></p>
+
+</div>
+
+{% endblock %}

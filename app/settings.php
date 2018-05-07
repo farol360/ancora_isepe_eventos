@@ -44,4 +44,14 @@ return [
         'name' => 'app',
         'path' => __DIR__ . '/../logs/app.' . date('Y-m-d') . '.log'
     ],
+
+    'version' => [
+        'project' => getenv('PROJECT'),
+        'version' => getenv('VERSION'),
+        'stage' => getenv('STAGE'),
+        'date' => getenv('DATE'),
+        'branch' => getebv('BRANCH'),
+        'repository' => getenv('REPOSITORY'),
+        'repository_link' => getenv('REPOSITORY_LINK')
+    ]
 ];

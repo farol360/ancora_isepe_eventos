@@ -112,6 +112,8 @@ $container['view'] = function ($c) {
     return $view;
 };
 
+$container['version'] = $settings['version'];
+
 Farol360\Ancora\User::setupUser($container);
 
 // ------------------
@@ -123,7 +125,8 @@ Farol360\Ancora\User::setupUser($container);
 $container['Farol360\Ancora\Controller\Admin\IndexController'] = function ($c) {
     return new Farol360\Ancora\Controller\Admin\IndexController(
         $c['view'],
-        $c['flash']
+        $c['flash'],
+        $c['version']
     );
 };
 
