@@ -1,3 +1,29 @@
+# Sistema de Eventos ISEPE RONDON
+
+**Client**:         Isepe Rondon;
+
+## Features list
+
+- [ ] Manage Users:
+    - Users;
+    - Roles;
+
+- [ ] Manage Events:
+    - [x] Editable Agree terms - with template;
+    - [x] Subscription limit;
+    - [x] Img default;
+    - [x] CRUD in Admin;
+
+- [x] Manage Events Type:
+    - [x] Agree Terms template;
+    - [x] CRUD in Admin;
+
+- [ ] Manage Trash;
+    - [x] Event list;
+    - [x] Event Recover;
+    - [ ] Event Remove;
+
+
 # Ancora - just a PHP way to construct web apps.
 
 This is a tool built by [Maurício Fauth](https://github.com/mauriciofauth) and [Thiago Nardi](https://github.com/thnardi) to develop web apps. We have working on this since 2017 in [Farol 360](https://farol360.com.br) jobs.
