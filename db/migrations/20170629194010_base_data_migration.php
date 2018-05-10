@@ -61,6 +61,86 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 2,
             ],
             [
+                'resource' => '/admin/events',
+                'description' => 'Eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/events/add',
+                'description' => 'Adicionar Eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/events/disable/:id',
+                'description' => 'Desabilitar Eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/events/edit/:id',
+                'description' => 'Editar Eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/events/enable/:id',
+                'description' => 'Habilitar Eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/events/trash/remove/:id',
+                'description' => 'Remover da Lixeira Eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/events/trash/send/:id',
+                'description' => 'Enviar para a lixeira Eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/events/update',
+                'description' => 'Rota para atualização de Eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types',
+                'description' => 'Lista de tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types/add',
+                'description' => 'Add de tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types/disable/:id',
+                'description' => 'Desabilitar tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types/edit/:id',
+                'description' => 'Editar tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types/enable/:id',
+                'description' => 'Habilitar tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types/get_terms/:id',
+                'description' => 'Retorna os termos tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types/remove/:id',
+                'description' => 'Remover tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types/update',
+                'description' => 'Atualiza tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
                 'resource' => '/admin/sobre',
                 'description' => 'Página Sobre',
                 'role_id' => 2,
