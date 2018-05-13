@@ -1,0 +1,85 @@
+{% extends "layout.twig" %}
+{% set nav_active = 'eventos' %}
+{% block content -%}
+
+
+
+<section class="blog-area section" style="padding-top:10px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12" style="margin-bottom: 1px;">
+        <ol class="breadcrumb" style="background-color: rgba(245, 245, 245, 0.53); text-align: left; margin-bottom: 1px;">
+          <li><a href="{{ base_url }}/">Início</a></li>
+          <li><a href="{{ base_url }}/eventos/categorias">Categorias</a></li>
+          <li class="active">{{ eventsType.name }}</li>
+        </ol>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="card">
+          <div class="card-header" data-background-color="purple">
+            <div class="row">
+              <div class="col-xs-12">
+                <h3>{{ eventsType.name }}</h3>
+                <h6>Últimos Eventos</h6>
+              </div>
+            </div>
+          </div>
+          <div class="card-content ">
+            {% if events is not empty %}
+              <table class="table" style="box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+                                          border-radius: 3px;
+                                          color: rgba(0, 0, 0, 0.87);
+                                          background: #fff;">
+                <thead >
+                  <th  style="width:120px;"></th>
+                  <th >Nome:</th>
+                  <th >Inscrição:</th>
+                  <th >Data:</th>
+                  <th></th>
+                </thead>
+                <tbody>
+
+                  {% for event in events if event.status == 1 %}
+                    <tr>
+                      <td style="width:120px;"><img src="{{ base_url() }}/{{ event.img_featured }}" style="max-width:100%;"></td>
+                      <td><p style="font-size:medium;">{{ event.name }}</p> </td>
+                      <td><p style="font-size:medium;">{{ event.price }}</p></td>
+                      <td> <p style="font-size:medium;" >{{ event.date_event }}</p></td>
+
+
+                      {# TODO #}
+                      <td style="width: 100px;">
+                        <p>
+                          <a class="btn btn-info btn-block" href="{{ base_url() }}/eventos/{{ event.id }}" style="margin-top: 2px;">
+                                  Detalhes
+                          </a>
+                        </p>
+                      </td>
+                    </tr>
+                  {% endfor %}
+
+                </tbody>
+              </table>
+
+            {% else %}
+
+              <h3>Não existem eventos disponíveis nesta categoria no momento.</h3>
+
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+{%- endblock %}
+{% block javascripts %} {{ parent()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+{% endblock %}

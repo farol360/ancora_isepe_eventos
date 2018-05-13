@@ -1,0 +1,151 @@
+{% extends "layout.twig" %}
+{% set nav_active = 'index' %}
+{% set nav_active = 'inicio' %}
+{% block content -%}
+
+<section class="blog-area section">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12" style="margin-bottom: 10px;">
+        <ol class="breadcrumb" style="background-color: rgba(245, 245, 245, 0.53); text-align: left;">
+          <li><a href="{{ base_url }}/">Início</a></li>
+          <li><a href="{{ base_url }}/events">Eventos</a></li>
+          <li class="active">{{ event.name }}</li>
+        </ol>
+
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="card" >
+        <div class="card-header" data-background-color="purple">
+          <h4 class="title">{{ event.name }}</h4>
+        </div>
+        <div class="card-container">
+          <div class="row">
+            <div class="col-xs-12 col-sm-5">
+              <img src="{{ base_url() }}/{{ event.img_featured }}" style="width:100%; padding: 10px;">
+            </div>
+
+            <div class="col-xs-12 col-sm-6">
+              <div class="row">
+                <div class="col-sm-6 form-group">
+                  <label>Tipo de Evento</label>
+                  <div  name="" style="font-size:medium;" class="form-control" > {{ event.event_type }}
+                  </div>
+                </div>
+                <div class="col-sm-3 form-group">
+                  <label for="subscription_limit">Limite de Vagas</label>
+                  <div id="subscription_limit" name="" style="font-size:medium;" class="form-control" > {{ event.subscription_limit }} </div>
+                </div>
+                <div class="col-sm-3 form-group ">
+                  <label for="subscriptions_atual"><p {% if event.subscriptions_atual < event.subscription_limit %}  class=" text-success" {% else %} class=" text-danger" {% endif %} style="margin-bottom:0px">Já Confirmados</p> </label>
+                  <div id="subscriptions_atual" name="" style="font-size:medium; font-weight:700;" class="form-control" > <p {% if event.subscriptions_atual < event.subscription_limit %}  class=" text-success" {% else %} class=" text-danger" {% endif %} >{{ event.subscriptions_atual }}</p>  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class=" col-sm-4 form-group">
+                  <label>Data Evento:</label>
+                  <input type="date" style="font-size:medium;" name="date_event"  class="form-control" value="{{ event.date_event }}"> </input>
+                </div>
+                <div class="col-sm-4 form-group">
+                  <label for="price">Valor Inscrição</label>
+                  <div id="price"name="" style="font-size:medium;" class="form-control"> {{ event.price }} </div>
+                </div>
+                <div class="col-sm-4 form-group">
+                  <label for="price">Carga Horária</label>
+                  <div id="workload"name="workload" style="font-size:medium;" class="form-control"> {{ event.workload }} </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-xs-12 col-sm-11 form-group">
+                  <label>Detalhes</label>
+                  <div id="description" class="form-control" style="height:auto;"></div>
+                  <input type="hidden" name="agree_terms" id="description_hidden" value="{{ event.description }}">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-12 col-sm-11 form-group">
+                  <label >Termos de Adesão</label>
+                  <div id="agree_terms" class="form-control" style="height:auto;"></div>
+                  <input type="hidden" name="agree_terms" id="agree_terms_hidden" value="{{ event.agree_terms }}">
+                </div>
+
+              </div>
+
+
+                <div class="row" style="margin-bottom: 15px;">
+
+                  <div class="col-xs-12 form-group">
+                   <div class="form-check">
+                      <label class="form-check-label">
+                        <input id="agree" class="form-check-input" type="checkbox" value="">
+                        <span style="font-size:medium;">Eu aceito os Termos de Adesão deste Evento.</span>
+                        <span  class="form-check-sign">
+                          <span  class="check"></span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-xs-12">
+
+                    {% if event.subscriptions_atual < event.subscription_limit %}
+
+                      <a id="btn-inscricao" class="btn btn-lg btn-success" disabled>Inscrição</a>
+
+                    {% else %}
+
+                      <a id="btn-inscricao-limite" class="btn btn-lg btn-warning" href="" disabled>Limite atingido</a>
+
+
+                    {% endif %}
+
+
+                  </div>
+                </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{%- endblock %}
+{% block javascripts %} {{ parent()}}
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script type="text/javascript">
+ $('#agree').change( function() {
+  if ($(this).prop('checked') == true ) {
+    $('#btn-inscricao').removeAttr('disabled');
+    $('#btn-inscricao').attr("href","{{ base_url() }}/inscricao/{{ event.id }}");
+  } else {
+    $('#btn-inscricao').attr('disabled','');
+    $('#btn-inscricao').removeAttr('href');
+  }
+ });
+
+</script>
+
+<script type="text/javascript">
+
+  var value_description = $("#description_hidden").val();
+  document.getElementById('description').innerHTML =
+      marked(value_description);
+
+  var value = $("#agree_terms_hidden").val();
+  document.getElementById('agree_terms').innerHTML =
+      marked(value);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+
+{% endblock %}

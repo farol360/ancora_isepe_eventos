@@ -1,0 +1,273 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Eventos - Administração - {{ parent() }}{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+{% endblock %}
+{% set nav_active = 'events' %}
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url() }}/admin">Início</a></li>
+  <li><a href="{{ base_url() }}/admin/events">Eventos</a></li>
+  <li class="active">Adicionar</li>
+</ol>
+{% endblock %}
+{% block content %}
+
+<input type="hidden" name="base_url" id="base_url" value="{{ base_url() }}">
+
+<div class="card" style="">
+  <div class="card-header" data-background-color="purple">
+    <h2 style="margin-top:10px;">Eventos</h2>
+    <p>Adicionar novo Evento</p>
+  </div>
+  <div class="card-content">
+    <div class="row">
+      <div class="col-xs-12  col-sm-12">
+        <form role="form" data-toggle="validator" action="{{ base_url() }}/admin/events/add" method="POST"  enctype="multipart/form-data">
+          <div class="row">
+
+            <!-- LEFT SIDE !-->
+            <div class="col-sm-6">
+
+              <div class="row">
+                <div class="col-xs-12 col-sm-5">
+                  <!-- event_type !-->
+                  <div class="form-group">
+                    <label for="id_event_type">Tipo de Evento</label>
+                    <select id="id_event_type" name="id_event_type" class="form-control" >
+                      {% set i = 1 %}
+                      {% for eventsType in eventsTypes %}
+                        {% if i == 1 %}
+                          <option name="{{ eventsType.id }}" selected="selected" value="{{ eventsType.id }}" >{{ eventsType.name }}</option>
+                        {% else %}
+                          <option name="{{ eventsType.id }}" value="{{ eventsType.id }}">{{ eventsType.name }}</option>
+                        {% endif %}
+                        {% set i = i + 1 %}
+                      {% endfor %}
+
+                    </select>
+                  </div>
+                  <!-- event_type END !-->
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-sm-offset-1">
+                  <div class="form-group">
+                    <label for="subscription_limit">Limite de Inscrições: (0 para ilimitado)</label>
+                    <input id="subscription_limit" type="text" name="subscription_limit" required class="form-control " value="{{ event.subscription_limit }} " placeholder="0">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-9">
+                  <!-- TODO: if need to work with temporary event in future !-->
+                  <input id="id" type="hidden" name="id" value="{{ event.id }}">
+                  <!-- TODO END !-->
+
+                  <!-- name !-->
+                  <label for="name">Título</label>
+                  <input id="name" class="form-control " type="text" name="name" placeholder="Título" value="{{ event.name }}" required>
+                  <!-- name END !-->
+                </div>
+
+                <div class="col-sm-3">
+
+                  <!-- workload !-->
+                  <div class="form-group">
+                    <label for="date_event">Carga Horária:</label>
+                    <input class="form-control " type="number" step="any" name="workload" id="workload" required value="{{ event.workload }}">
+                  </div>
+                  <!-- workload END !-->
+
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-6">
+
+                  <!-- date_event !-->
+                  <div class="form-group">
+                    <label for="date_event">Data do Evento:</label>
+                    <input class="form-control " type="date" name="date_event" id="date_event" value="{{ event.date_event }}" required>
+                  </div>
+                  <!-- date_event END !-->
+
+                </div>
+                <div class="col-sm-6">
+                  <!-- price !-->
+                  <div class="form-group">
+                    <label>Inscrição:</label>
+                    <input class="form-control" type="text" name="price" id="price" value="{{ event.price }}" placeholder="R$ 0,00" required>
+                  </div>
+                  <!-- price END !-->
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+
+                  <!-- description !-->
+                  <label for="description">Descrição:</label>
+                  <textarea class="" rows="3" name="description" placeholder="Descrição" >{{ event.description }}</textarea>
+                  <!-- description END !-->
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12" class="">
+                  <!-- agree_terms !-->
+                  <label for="agree_terms">Termos de adesão:</label>
+                  <textarea id="agree_terms" class="" rows="10" name="agree_terms"  placeholder="Descrição" type="text">{{ event.agree_terms }}</textarea>
+                  <!-- agree_terms END !-->
+                </div>
+              </div>
+
+              <div class="row">
+
+
+                <div class="col-xs-12 col-sm-6 ">
+                  <div class="form-group">
+                    <label>Status:</label>
+                    <div class="checkbox" >
+                      <label>
+                        <input type="checkbox" name="status" value="1"><span>Publicado</span>
+
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT SIDE !-->
+            <div class="col-sm-6">
+              <div class="row">
+                <div class="col-xs-12 col-sm-12">
+                  <!-- img_featured !-->
+                  <div class="panel panel-default">
+                    <div class="panel-heading text-center">
+                      Imagem de detaque
+                    </div>
+                    <div class="panel-body">
+
+                      {% if not event.img_featured %}
+                        <img id="img_featured_show" src="{{ base_url() }}/images/default-img.jpg" alt="Imagem de destaque" class="img-responsive" style="max-height: 300px; width: auto; margin: 0 auto;">
+                      {% else %}
+                        <img id="img_featured_show" src="{{ event.img_featured }}" alt="Imagem de destaque" class="img-responsive" style="max-height: 300px; width: auto; margin: 0 auto;">
+                      {% endif %}
+
+                    </div>
+                    <div class="panel-footer">
+                      <p class="text-center" >Tamanho Máximo: 300kb</p>
+                      <input id="img_featured" type="file" class="btn btn-default btn-lg" style="display: block; margin: 0 auto; position:relative; max-width: 100%;" name="img_featured" value="images/default-img.jpg"></input>
+
+                    </div>
+                  </div>
+                  <!-- img_featured END !-->
+                </div>
+              </div>
+
+              <div id="img" style="" class="form-group">
+              </div>
+
+            </div>
+          </div>
+          <div class="row" style="margin-bottom:3vh;">
+            <a href="{{ base_url() }}/admin/events" class="btn btn-default btn-lg">Cancelar</a>
+
+
+            <button type="submit" class="btn btn-success btn-lg">Adicionar</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js"></script>
+
+<script type="text/javascript">
+$("#price").maskMoney({
+         prefix: "R$ ",
+         decimal: ",",
+         thousands: "."
+     });
+</script>
+
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>
+  var description = new SimpleMDE({
+    element: $("#description")[0],
+    spellChecker: false,
+    status: false,
+    toolbar: ["bold","|","italic","|","heading-1", "|", "heading-2", "|", "heading-3"],
+
+  });
+
+  var agree_terms = new SimpleMDE({
+    element: $("#agree_terms")[0],
+    spellChecker: false,
+    status: false,
+    toolbar: ["bold","|","italic","|","heading-1", "|", "heading-2", "|", "heading-3"],
+
+  });
+
+  var base_url = $('#base_url').val();
+  var tipo = $('#id_event_type option:selected').val();
+
+  $.ajax({
+    url: base_url + '/admin/event_types/get_terms/' + tipo,
+    success: function (result) {
+      agree_terms.value(result);
+    }
+  });
+
+  $('#id_event_type').change(function() {
+
+    agree_terms.value('');
+
+    var base_url = $('#base_url').val();
+    var tipo = $(this).find('option:selected').val();
+
+    $.ajax({
+      url: base_url + '/admin/event_types/get_terms/' + tipo,
+      success: function (result) {
+        agree_terms.value(result);
+      }
+    });
+
+
+  }
+  );
+</script>
+
+<script type="text/javascript">
+
+  var imagem = $("#img_featured_show");
+  var arquivo = $("#img_featured");
+  arquivo.on("change", function (){
+      if (arquivo[0].files.length == 0)
+      return false;
+      var file = arquivo[0].files[0];
+      var url = URL.createObjectURL(file);
+      imagem.attr("src", url);
+      imagem.attr("title", file.name);
+      console.log(arquivo[0].files[0]);
+   });
+
+</script>
+
+
+<script type="text/javascript">
+
+
+
+</script>
+
+
+
+{% endblock %}

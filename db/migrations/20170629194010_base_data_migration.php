@@ -41,21 +41,6 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 1
             ],
             [
-                'resource' => '/users/signin',
-                'description' => 'Sign in',
-                'role_id' => 1
-            ],
-            [
-                'resource' => '/users/signout',
-                'description' => 'Sign out',
-                'role_id' => 1
-            ],
-            [
-                'resource' => '/users/signup',
-                'description' => 'Sign up',
-                'role_id' => 1
-            ],
-            [
                 'resource' => '/admin',
                 'description' => 'Página administrativa',
                 'role_id' => 2,
@@ -136,6 +121,16 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 2,
             ],
             [
+                'resource' => '/admin/event_types/verifytoremove/:id',
+                'description' => 'Remover tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/event_types/verifytounpublish/:id',
+                'description' => 'Remover tipos de eventos',
+                'role_id' => 2,
+            ],
+            [
                 'resource' => '/admin/event_types/update',
                 'description' => 'Atualiza tipos de eventos',
                 'role_id' => 2,
@@ -196,6 +191,36 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 3,
             ],
             [
+                'resource' => '/admin/subscriptions',
+                'description' => 'Ver inscrições',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/subscriptions/:id',
+                'description' => 'Ver inscrição',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/subscriptions/activate/:id',
+                'description' => 'Ativar inscrição',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/subscriptions/deactivate/:id',
+                'description' => 'Desativar inscrição',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/subscriptions/open/:id',
+                'description' => 'Abrir inscrição',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/trash',
+                'description' => 'Ver usuários',
+                'role_id' => 2,
+            ],
+            [
                 'resource' => '/admin/user',
                 'description' => 'Ver usuários',
                 'role_id' => 2,
@@ -236,6 +261,46 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 2,
             ],
             [
+                'resource' => '/eventos',
+                'description' => 'Catálogo de Eventos do Sistema.',
+                'role_id' => 1,
+            ],
+            [
+                'resource' => '/eventos/:id',
+                'description' => 'Detalhes de um evento.',
+                'role_id' => 1,
+            ],
+            [
+                'resource' => '/eventos/categorias',
+                'description' => 'Categorias de Eventos.',
+                'role_id' => 1,
+            ],
+            [
+                'resource' => '/eventos/categorias/:id',
+                'description' => 'Eventos de uma categoria específica.',
+                'role_id' => 1,
+            ],
+            [
+                'resource' => '/inscricao',
+                'description' => 'Inscrição em Evento.',
+                'role_id' => 4,
+            ],
+            [
+                'resource' => '/inscricao/:id',
+                'description' => 'Inscrição em Evento.',
+                'role_id' => 4,
+            ],
+            [
+                'resource' => '/inscricao/add',
+                'description' => 'Adiciona inscrição em evento.',
+                'role_id' => 4,
+            ],
+            [
+                'resource' => '/users/inscricoes',
+                'description' => 'Ver perfil',
+                'role_id' => 4,
+            ],
+            [
                 'resource' => '/users/profile',
                 'description' => 'Ver perfil',
                 'role_id' => 4,
@@ -254,6 +319,21 @@ class BaseDataMigration extends AbstractMigration
                 'resource' => '/users/recover/token/:token',
                 'description' => 'Recuperar conta',
                 'role_id' => 1,
+            ],
+            [
+                'resource' => '/users/signin',
+                'description' => 'Sign in',
+                'role_id' => 1
+            ],
+            [
+                'resource' => '/users/signout',
+                'description' => 'Sign out',
+                'role_id' => 1
+            ],
+            [
+                'resource' => '/users/signup',
+                'description' => 'Sign up',
+                'role_id' => 1
             ],
             [
                 'resource' => '/users/verify/:token',

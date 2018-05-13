@@ -1,0 +1,150 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Isepe Eventos - {{ parent() }}
+{% endblock %}
+
+{% set nav_active = 'subscriptions' %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url }}/admin">Início</a></li>
+  <li class="active">Inscrições</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  {# Purple header #}
+  <div class="card-header" data-background-color="purple">
+    <div class="row">
+      <div class="col-xs-12 col-sm-8">
+        <h4 class="title">Inscrições em Eventos</h4>
+      </div>
+    </div>
+  </div>
+
+  {# Content of table #}
+  <div class="card-content table-responsive">
+    <div class="row">
+      <div class="form-group">
+        <div class="col-xs-12 col-sm-4">
+          <label for="eventos">Evento:</label>
+          <select id="select-eventos" class="form-control">
+            <option {% if eventFeatured == null %} selected {% endif %}>Todos os Eventos</option>
+
+            {% for event in events if event.status == 1 %}
+              <option value="{{ event.id }}" {% if event.id == eventFeatured.id %} selected {% endif %}  >{{ event.name }}</option>
+
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-xs-12 col-sm-2">
+          <a id="filtrar" href="{{ base_url() }}/admin/subscriptions/{{ eventFeatured.id }}" class="btn btn-info">Filtrar</a>
+        </div>
+      <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-5">
+          <label>Legenda</label>
+          <div class="row">
+
+            <button class="btn btn-success" style="margin-top:0px;">Efetivar</button>
+
+            <button class="btn btn-warning" style="margin-top:0px;">Não Efetivar</button>
+            <button class="btn btn-info" style="margin-top:0px;">Em Aberto</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if subscriptions is not empty %}
+      <table class="table">
+
+        {# Header of table #}
+        <thead class="text-primary">
+          <th>
+            Cód.
+          </th>
+          <th>
+            Usuário
+          </th>
+          <th>
+            Evento
+          </th>
+          <th>
+            Preço
+          </th>
+          <th>
+            Data Inscrição
+          </th>
+          <th>
+            Status
+          </th>
+          <th>
+          </th>
+          <th>
+          </th>
+        </thead>
+
+        <tbody>
+
+          {% for subscription in subscriptions %}
+            <tr>
+              <td>{{ subscription.id }}</td>
+              <td>{{ subscription.user_name }}</td>
+              <td>{{ subscription.event_name }}</td>
+              <td>{{ subscription.event_price }}</td>
+              <td><p style="" >{{ subscription.created_at }}</p></td>
+              <td style="width: 130px;"> <p style="font-size:medium; padding: 5px; " {% if subscription.payd == 0  %} class="bg-info"  {% endif %} {% if subscription.payd == 1  %} class="bg-success"  {% endif %} {% if subscription.payd == 2  %} class="bg-warning"  {% endif %}>
+
+                                {% if subscription.payd == 0  %} Em Aberto  {% endif %}
+                                {% if subscription.payd == 1  %} Efetivado  {% endif %}
+                                {% if subscription.payd == 2  %} Não Efetivado  {% endif %}
+                        </p></td>
+              <td style="width: 220px;">
+                <a href="{{ base_url() }}/admin/subscriptions/activate/{{ subscription.id }}?event={{ eventFeatured.id }}" class="btn btn-success" style="margin-top: 2px; width:45px;" {% if subscription.payd == 1  %} disabled  {% endif %}>OK</a>
+                <a href="{{ base_url() }}/admin/subscriptions/deactivate/{{ subscription.id }}?event={{ eventFeatured.id }}" class="btn btn-warning" style="margin-top: 2px; width:45px;"  {% if subscription.payd == 2  %} disabled  {% endif %}>x</a>
+                <a href="{{ base_url() }}/admin/subscriptions/open/{{ subscription.id }}?event={{ eventFeatured.id }}" class="btn btn-info" style="margin-top: 2px; width:45px;" {% if subscription.payd == 0  %} disabled  {% endif %}>0</a>
+              </td>
+              <td style="width: 15px;"><p><a class="btn btn-danger" href="{{ base_url() }}/admin/events/trash/send/{{ event.id }}" style="margin-top:2px;"><i class="material-icons" style="width: 15px;">delete forever</i></a></p></td>
+            </tr>
+          {% endfor %}
+
+        </tbody>
+      </table>
+    {% else %}
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="bg-warning" style="padding-top:10px; padding-bottom:10px; margin-top: 10px; text-align:center;">Não existem inscrições cadastradas neste evento.</div>
+        </div>
+      </div>
+
+    {% endif %}
+    <div class="row">
+      <div class="col-xs-12">
+        <ul class="pager">
+          <li{% if page == 1 %} class="disabled"{% endif %}>
+            <a{% if page > 1 %} href="{{ base_url() }}/admin/subscriptions?page={{ page - 1 }}"{% endif %}>Anterior</a>
+          </li>
+          <li{% if page >= amountPages %} class="disabled"{% endif %}>
+            <a{% if page < amountPages %} href="{{ base_url() }}/admin/subscriptions?page={{ page + 1 }}"{% endif %}>Próximo</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+<script type="text/javascript">
+
+$('#select-eventos').change( function () {
+  var value = $(this).val();
+
+  $('#filtrar').attr('href', '{{ base_url() }}/admin/subscriptions/' + value);
+});
+
+</script>
+
+{% endblock %}

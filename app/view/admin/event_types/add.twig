@@ -1,0 +1,128 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Eventos - Administração - {{ parent() }}{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+{% endblock %}
+{% set nav_active = 'events' %}
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url() }}/admin">Início</a></li>
+  <li><a href="{{ base_url() }}/admin/event_types">Tipo de Eventos</a></li>
+  <li class="active">Adicionar</li>
+</ol>
+{% endblock %}
+{% block content %}
+
+<div class="card" style="">
+  <div class="card-header" data-background-color="purple">
+    <h2 style="margin-top:10px;">Tipo de Eventos</h2>
+    <p>Adicionar novo Tipo de Evento</p>
+  </div>
+  <div class="card-content">
+    <div class="row">
+      <div class="col-xs-12  col-sm-12">
+        <form role="form" data-toggle="validator" action="{{ base_url() }}/admin/event_types/add" method="POST"  enctype="multipart/form-data">
+          <div class="row">
+
+            <!-- LEFT SIDE !-->
+            <div class="col-sm-12">
+              <div class="row">
+                <div class="col-sm-12">
+
+                  <!-- name !-->
+                  <div class="form-group">
+                    <label for="name">Nome</label>
+                    <input id="name" class="form-control form-group" type="text" name="name" placeholder="Nome" value="" required>
+                  </div>
+                  <!-- name END !-->
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+
+                  <!-- description !-->
+                  <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <textarea id="description" class="form-control form-group" rows="3" name="description" placeholder=""></textarea>
+                  </div>
+
+                  <!-- description END !-->
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+
+                  <!-- agree_terms !-->
+                  <div class="form-group">
+                    <label for="agree_terms">Termo de Adesão Padrão</label>
+                    <textarea id="agree_terms" class="form-control form-group" rows="3" name="agree_terms" placeholder="Insira aqui o termo de adesão padrão."></textarea>
+                  </div>
+                  <!-- agree_terms END !-->
+
+
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12 col-sm-6 ">
+                  <div class="form-group">
+                    <label>Status:</label>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="status" value="1"><span>Publicado</span>
+
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+          <div class="row" style="margin-bottom:3vh;">
+            <a href="{{ base_url() }}/admin/event_types" class="btn btn-default btn-lg">Cancelar</a>
+            <button type="submit" class="btn btn-success btn-lg">Adicionar</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js"></script>
+
+<script type="text/javascript">
+$("#price").maskMoney({
+         prefix: "R$ ",
+         decimal: ",",
+         thousands: "."
+     });
+</script>
+
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>
+var description = new SimpleMDE({
+  element: $("#description")[0],
+  spellChecker: false,
+  status: false,
+  toolbar: false,
+
+});
+
+var agree_terms = new SimpleMDE({
+  element: $("#agree_terms")[0],
+  spellChecker: false,
+  status: false,
+  toolbar: false,
+
+});
+</script>
+
+{% endblock %}

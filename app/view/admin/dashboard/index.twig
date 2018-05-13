@@ -1,17 +1,18 @@
 {% extends "admin/layout.twig" %}
 {% block html_title %}Administração - {{ parent() }}{% endblock %}
-{% set nav_active = 'dashboard' %}
-
+{% set nav_active = 'index' %}
 {% block breadcrumbs %}
 <ol class="breadcrumb">
   <li class="active">Início</li>
 </ol>
 {% endblock %}
-
 {% block content %}
 
 <div class="main">
-  <h1>hello World</h1>
+  <div class="jumbotron">
+    <h1>Isepe Eventos</h1>
+    <p>Plataforma de administração de Eventos do Instituto Isepe Rondon.</p>
+  </div>
 </div>
 
 {% endblock %}

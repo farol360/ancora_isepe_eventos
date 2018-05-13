@@ -130,6 +130,27 @@ $container['Farol360\Ancora\Controller\Admin\IndexController'] = function ($c) {
     );
 };
 
+// Controllers
+$container['Farol360\Ancora\Controller\Admin\EventsController'] = function ($c) {
+    return new Farol360\Ancora\Controller\Admin\EventsController(
+        $c['view'],
+        $c['flash'],
+        new Farol360\Ancora\Model\EventModel($c['db']),
+        new Farol360\Ancora\Model\EventTypeModel($c['db']),
+        new Farol360\Ancora\Model\EntityFactory()
+    );
+};
+
+$container['Farol360\Ancora\Controller\Admin\EventTypesController'] = function ($c) {
+    return new Farol360\Ancora\Controller\Admin\EventTypesController(
+        $c['view'],
+        $c['flash'],
+        new Farol360\Ancora\Model\EventModel($c['db']),
+        new Farol360\Ancora\Model\EventTypeModel($c['db']),
+        new Farol360\Ancora\Model\EntityFactory()
+    );
+};
+
 $container['Farol360\Ancora\Controller\Admin\PermissionController'] = function ($c) {
     return new Farol360\Ancora\Controller\Admin\PermissionController(
         $c['view'],
@@ -149,12 +170,33 @@ $container['Farol360\Ancora\Controller\Admin\RoleController'] = function ($c) {
     );
 };
 
+$container['Farol360\Ancora\Controller\Admin\SubscriptionsController'] = function ($c) {
+    return new Farol360\Ancora\Controller\Admin\SubscriptionsController(
+        $c['view'],
+        $c['flash'],
+        new Farol360\Ancora\Model\EventModel($c['db']),
+        new Farol360\Ancora\Model\EventTypeModel($c['db']),
+        new Farol360\Ancora\Model\SubscriptionModel($c['db']),
+        new Farol360\Ancora\Model\EntityFactory()
+    );
+};
+
+$container['Farol360\Ancora\Controller\Admin\TrashController'] = function ($c) {
+    return new Farol360\Ancora\Controller\Admin\TrashController(
+        $c['view'],
+        $c['flash'],
+        new Farol360\Ancora\Model\EventModel($c['db']),
+        new Farol360\Ancora\Model\EventTypeModel($c['db']),
+        new Farol360\Ancora\Model\EntityFactory()
+    );
+};
+
 $container['Farol360\Ancora\Controller\Admin\UserController'] = function ($c) {
     return new Farol360\Ancora\Controller\Admin\UserController(
         $c['view'],
         $c['flash'],
-        new Farol360\Ancora\Model\UserModel($c['db'], $c['settings']['api']['baseUrl']),
-        new Farol360\Ancora\Model\RoleModel($c['db'], $c['settings']['api']['baseUrl']),
+        new Farol360\Ancora\Model\UserModel($c['db']),
+        new Farol360\Ancora\Model\RoleModel($c['db']),
         new Farol360\Ancora\Model\EntityFactory()
     );
 };
@@ -164,6 +206,10 @@ $container['Farol360\Ancora\Controller\PageController'] = function ($c) {
         $c['view'],
         $c['flash'],
         $c['mailer'],
+        new Farol360\Ancora\Model\EventModel($c['db']),
+        new Farol360\Ancora\Model\EventTypeModel($c['db']),
+        new Farol360\Ancora\Model\UserModel($c['db']),
+        new Farol360\Ancora\Model\SubscriptionModel($c['db']),
         new Farol360\Ancora\Model\EntityFactory()
     );
 };

@@ -1,0 +1,108 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Isepe Eventos - {{ parent() }}
+{% endblock %}
+
+{% set nav_active = 'events' %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url }}/admin">Início</a></li>
+  <li class="active">Eventos</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  {# Purple header #}
+  <div class="card-header" data-background-color="purple">
+    <div class="row">
+      <div class="col-xs-12 col-sm-7">
+        <h4 class="title">Lista de Eventos</h4>
+      </div>
+      <div class="col-xs-12 col-sm-5">
+        <div class="pull-right">
+          <a class="btn btn-success" href="{{ base_url }}/admin/events/add" style="margin-top:1px;">
+            Novo Evento
+          </a>
+          <a class="btn btn-info" href="{{ base_url }}/admin/event_types" style="margin-top:1px;">
+            Tipos de Eventos
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# Content of table #}
+  <div class="card-content table-responsive">
+    <table class="table">
+
+      {# Header of table #}
+      <thead class="text-primary">
+        <th>Id</th>
+        <th>Imagem Destaque</th>
+        <th>Nome</th>
+        <th>Tipo</th>
+        <th>Preço</th>
+        <th>Data</th>
+        <th>Carga Horaria</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </thead>
+
+      <tbody>
+        {% if events is not empty %}
+          {% for event in events %}
+            <tr>
+              <td>{{ event.id_events }}</td>
+              <td style="width:150px;"><img src="{{ base_url() }}/{{ event.img_featured }}" style="max-width:100%;"></td>
+              <td>{{ event.name }}</td>
+              <td>{{ event.event_type }}</td>
+              <td>{{ event.price }}</td>
+              <td><div class="form-group" style="margin:0px;"><input type="date" name="" class="form-control" value="{{ event.date_event }}" disabled>
+              </div></td>
+              <td><p style="" >{{ event.workload }}</p></td>
+
+              <td style="width: 100px;">
+                <p>
+                  <a class="btn btn-info btn-block" href="{{ base_url() }}/admin/events/edit/{{ event.id }}">
+                          Editar
+                  </a>
+                </p>
+                {% if event.status %}
+                  <p><a href="{{ base_url() }}/admin/events/disable/{{ event.id }}" class="btn btn-default btn-block">
+                    Despublicar
+                  </a></p>
+                {% else %}
+                  <p><a href="{{ base_url() }}/admin/events/enable/{{ event.id }}" class="btn btn-success btn-block">
+                    Publicar
+                  </a></p>
+                {% endif %}
+              </td>
+              <td style=""><p><a class="btn btn-danger" href="{{ base_url() }}/admin/events/trash/send/{{ event.id }}"><i class="material-icons">delete</i></a></p></td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <div class="alert alert-warning" role="alert">Não existem eventos cadastrados</div>
+        {% endif %}
+      </tbody>
+    </table>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <ul class="pager">
+          <li{% if page == 1 %} class="disabled"{% endif %}>
+            <a{% if page > 1 %} href="{{ base_url() }}/admin/events?page={{ page - 1 }}"{% endif %}>Anterior</a>
+          </li>
+          <li{% if page >= amountPages %} class="disabled"{% endif %}>
+            <a{% if page < amountPages %} href="{{ base_url() }}/admin/events?page={{ page + 1 }}"{% endif %}>Próximo</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

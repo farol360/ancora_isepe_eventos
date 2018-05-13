@@ -9,10 +9,10 @@
     - Roles;
 
 - [ ] Manage Events:
-    - [x] Editable Agree terms - with template;
-    - [x] Subscription limit;
-    - [x] Img default;
-    - [x] CRUD in Admin;
+    - Editable Agree terms - with template;
+    - Subscription limit;
+    - Event Image;
+    - Workload for event;
 
 - [x] Manage Events Type:
     - [x] Agree Terms template;
@@ -29,8 +29,6 @@
 This is a tool built by [Maurício Fauth](https://github.com/mauriciofauth) and [Thiago Nardi](https://github.com/thnardi) to develop web apps. We have working on this since 2017 in [Farol 360](https://farol360.com.br) jobs.
 
 ## Getting Started
-
-The core of application are built with [Slim 3 Framework](https://www.slimframework.com). To understand the code you must focus on slim's *routes* and *dependecies* management and learn about his [middleware](https://www.slimframework.com/docs/v3/concepts/middleware.html) concept.
 
 We create a [guide](https://github.com/thnardi/ancora/blob/master/GUIDE.md) to help anyone who may be interested.
 

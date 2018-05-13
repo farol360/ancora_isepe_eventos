@@ -1,0 +1,145 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Eventos - Administração - {{ parent() }}{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+{% endblock %}
+{% set nav_active = 'events' %}
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url() }}/admin">Início</a></li>
+  <li><a href="{{ base_url() }}/admin/event_types">Tipos de Eventos</a></li>
+  <li class="active">Editar</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+
+<div class="card" style="">
+  <div class="card-header" data-background-color="purple">
+    <h2 style="margin-top:10px;">Tipos de Eventos</h2>
+    <p>Editar Tipo de Evento</p>
+  </div>
+  <div class="card-content">
+    <div class="row">
+      <div class="col-xs-12  col-sm-12">
+        <form role="form" data-toggle="validator" action="{{ base_url() }}/admin/event_types/update" method="POST"  enctype="multipart/form-data">
+          <div class="row">
+
+            <!-- LEFT SIDE !-->
+            <div class="col-sm-12">
+              <div class="row">
+                <div class="col-sm-12">
+
+                  <!-- TODO: if need to work with temporary event in future !-->
+                  <input id="id" type="hidden" name="id" value="{{ eventType.id}}">
+                  <!-- TODO END !-->
+
+                  <!-- name !-->
+                  <div class="form-group">
+                    <label for="name">Nome</label>
+                    <input id="name" class="form-control form-group" type="text" name="name" placeholder="Nome" value="{{ eventType.name }}" required>
+                  </div>
+                  <!-- name END !-->
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+
+                  <!-- description !-->
+                  <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <textarea id="description" class="form-control form-group" rows="3" name="description" placeholder="">{{ eventType.description }}</textarea>
+                  </div>
+
+                  <!-- description END !-->
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+
+                  <!-- agree_terms !-->
+                  <div class="form-group">
+                    <label for="agree_terms">Termo de Adesão Padrão</label>
+                    <textarea id="agree_terms" class="form-control form-group" rows="3" name="agree_terms" placeholder="Insira aqui o termo de adesão padrão.">{{ eventType.agree_terms }}</textarea>
+                  </div>
+                  <!-- agree_terms END !-->
+
+
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12 col-sm-6 ">
+                  <div class="form-group">
+                    <label>Status:</label>
+                    <div class="checkbox">
+                      <label>
+
+                        {% if eventType.status == 0 %}
+                          <input type="checkbox" name="status" value="1"><span>Publicado</span>
+                        {% else %}
+                          <input type="checkbox" name="status" value="1" checked><span>Publicado</span>
+                        {% endif %}
+
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="row" style="margin-bottom:3vh;">
+            <div class="col-xs-12">
+              <a href="{{ base_url }}/admin/event_types" class="btn btn-default btn-lg">Cancelar</a>
+
+              </button>
+              <button type="submit" class="btn btn-success btn-lg">Atualizar</button>
+            </div>
+
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js"></script>
+
+<script type="text/javascript">
+$("#price").maskMoney({
+         prefix: "R$ ",
+         decimal: ",",
+         thousands: "."
+     });
+</script>
+
+<script type="text/javascript">
+
+  var imagem = $("#img_featured_show");
+  var arquivo = $("#img_featured");
+  arquivo.on("change", function (){
+      if (arquivo[0].files.length == 0)
+      return false;
+      var file = arquivo[0].files[0];
+      var url = URL.createObjectURL(file);
+      imagem.attr("src", url);
+      imagem.attr("title", file.name);
+      console.log(arquivo[0].files[0]);
+   });
+
+</script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "layout.twig" %}
+{% set nav_active = 'inscricao' %}
+{% block content -%}
+<section class="blog-area section" style="padding-top:10px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12" style="margin-bottom: 1px;">
+        <ol class="breadcrumb" style="background-color: rgba(245, 245, 245, 0.53); text-align: left; margin-bottom: 1px;">
+          <li><a href="{{ base_url }}/">Início</a></li>
+          <li class="active">Inscrição</li>
+        </ol>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="card">
+
+
+        {# Content of table #}
+        <div class="card-content table-responsive">
+          <h1 style="text-align:center;">Esta inscrição já foi recebida anteriormente!</h1>
+
+          <br>
+          <h2 style="text-align:center;">Um registro foi encontrado em nosso banco de dados.</h2>
+          <br>
+
+          <h4 style="text-align:center;">Acompanhe sua inscrição no seu painel.</h4>
+
+          <br>
+          <div class="col-xs-12 col-sm-offset-4 col-sm-4" >
+            <a href="{{ base_url() }}/users/inscricoes" class="btn btn-lg btn-info" style="width: 100%">Painel do Usuário</a>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+</section>
+
+
+{%- endblock %}
+{% block javascripts %} {{ parent()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+{% endblock %}

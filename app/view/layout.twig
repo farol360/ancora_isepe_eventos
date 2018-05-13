@@ -12,7 +12,7 @@
     <link rel="icon" href="{{ base_url() }}/favicon.png" type="image/x-icon">
     !-->
 
-    <title>{% block html_title %}Ancora{% endblock %}</title>
+    <title>{% block html_title %}Eventos - Isepe Eventos{% endblock %}</title>
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
@@ -54,18 +54,16 @@
             </button>
 
             <!-- Here you change your brand !-->
-            <a class="navbar-brand" href="{{ base_url() }}" >Ancora </a>
+            <a class="navbar-brand" href="{{ base_url() }}" style="padding:0px;"><img src="{{ base_url() }}/images/logo.png" style="width:170px;" alt="Isepe Rondon"></a>
           </div>
 
           <div class="collapse navbar-collapse" id="main-navbar">
             <ul class="nav navbar-nav">
-              {#
-
-               // Example of menu usage with twig. use "nav_active" in page twig to set active class in menu.
-
-              <li {% if nav_active == 'firstUseCase' %} class="active" {% else %} {% endif %}><a href="{{ base_url() }}/eventos">First Use Case</a></li>
-
-              #}
+              <ul class="nav navbar-nav">
+              <li {% if nav_active == 'eventos' %} class="active" {% else %} {% endif %}><a href="{{ base_url() }}/eventos">Catálogo de Eventos</a></li>
+              <li {% if nav_active == 'categorias' %} class="active" {% else %} {% endif %}><a href="{{ base_url() }}/eventos/categorias">Categorias</a></li>
+              <li {% if nav_active == 'categorias' %} class="active" {% else %} {% endif %}><a href="{{ base_url() }}/eventos/categorias">Pesquisar Certificados</a></li>
+            </ul>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               {%- if is_auth() %}
@@ -101,7 +99,7 @@
     <footer class="footer">
       <div class="container">
         <p>
-          Ancora. You can change this message on layout.twig footer's tag. <small>Create with love by <a href="https://farol360.com.br">Farol360</a>.</small>
+          Sistema de Eventos Isepe Rondon. <small>Desenvolvido com amor por <a href="https://farol360.com.br">Farol360</a>.</small>
         </p>
       </div>
     </footer>

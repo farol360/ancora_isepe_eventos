@@ -1,0 +1,154 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Isepe Eventos - {{ parent() }}
+{% endblock %}
+
+{% set nav_active = 'event_types' %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url }}/admin">Início</a></li>
+  <li><a href="{{ base_url }}/admin/events">Eventos</a></li>
+  <li class="active">Tipos de Eventos</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+{# this is some kind of gambita to get base url in ajax url #}
+<input id="base_url" type="hidden" name="base_url" value="{{ base_url() }}">
+
+<div class="card">
+  {# Purple header #}
+  <div class="card-header" data-background-color="purple">
+    <div class="row">
+      <div class="col-xs-12 col-sm-10">
+        <h4 class="title">Lista de Eventos</h4>
+      </div>
+      <div class="col-xs-12 col-sm-2">
+        <div class="pull-right">
+          <a class="btn btn-success" href="{{ base_url }}/admin/event_types/add" style="margin-top:1px;">
+            Adicionar Tipo
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# Content of table #}
+  <div class="card-content table-responsive">
+    <table class="table">
+
+      {# Header of table #}
+      <thead class="text-primary">
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </thead>
+
+      <tbody>
+        {% if event_types is not empty %}
+          {% for eventType in event_types %}
+            <tr>
+              <td>{{ eventType.name }}</td>
+              <td>{{ eventType.description }}</td>
+
+              <td style="width: 100px;">
+                <p>
+                  <a class="btn btn-info btn-block" href="{{ base_url() }}/admin/event_types/edit/{{ eventType.id }}">
+                          Editar
+                  </a>
+                </p>
+              </td>
+              <td style="width: 100px;">
+                {% if eventType.status %}
+
+                  <p><a href="{{ base_url() }}/admin/event_types/disable/{{ eventType.id }}" class="btn btn-default btn-block">
+                    Despublicar
+                  </a></p>
+                {% else %}
+                  <p><a href="{{ base_url() }}/admin/event_types/enable/{{ eventType.id }}" class="btn btn-success btn-block">
+                    Publicar
+                  </a></p>
+                {% endif %}
+              </td>
+              <td style=""><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-remove" data-id="{{ eventType.id }}"><i class="material-icons">delete</i></button> </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <div class="alert alert-warning" role="alert">Não existem tipos de eventos cadastrados</div>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="modal-unpublish" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" style="font-weight: 700;"></h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-default" data-dismiss="modal">Fechar</a>
+        <a id="btn-unpublish-confirm" href="" class="btn btn-danger">Despublicar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" style="font-weight: 700;"></h4>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-default" data-dismiss="modal">Fechar</a>
+        <a class="btn   btn-danger" id="remove" style="margin-bottom:10px;" href=""  disabled>Remover</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+  <script type="text/javascript">
+
+    $('#modal-remove').on('show.bs.modal', function (event) {
+      var base_url = $("#base_url").attr("value");
+      var button = $(event.relatedTarget);
+      var recipient = button.data('id');
+      var modal = $(this);
+
+      $.ajax({
+        url: base_url + "/admin/event_types/verifytoremove/" + recipient,
+        success: function (result) {
+          console.log('teste');
+
+          if (result > 0) {
+            modal.find('.modal-title').text('ATENÇÃO!');
+            modal.find('.modal-body p').text('Não é possível remover. O Tipo de Evento está associado a ' + result + ' Eventos no momento. Por favor verifique e tente novamente.');
+            modal.find('.modal-footer #remove').attr("disabled", true);
+
+          } else {
+            modal.find('.modal-title').text('CONFIRMAR REMOÇÃO.');
+            modal.find('.modal-body p').text('Este processo é definitivo. Tem certeza?');
+            modal.find('.modal-footer #remove').removeAttr("disabled");
+            modal.find('.modal-footer #remove').attr("href",base_url + "/admin/event_types/remove/" + recipient);
+          }
+        }
+      });
+
+    });
+
+  </script>
+{% endblock %}

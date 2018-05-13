@@ -41,21 +41,79 @@
     <div class="wrapper">
       <div class="sidebar" data-color="purple" {# data-image="{{ base_url() }}/img/sidebar-1.jpg" #}>
         <div class="logo">
-          <a href="{{ base_url() }}/admin" class="simple-text">
-            Ancora
+          <a href="http://www.iseperondon.com.br" class="simple-text">
+            Isepe Eventos
           </a>
         </div>
         <div class="sidebar-wrapper">
           <ul class="nav">
-            <li {% if nav_active == "dashboard" %} class="active" {% endif %}>
+            <li {% if nav_active == "index" %} class="active" {% endif %}>
               <a href="{{ base_url }}/admin">
                 <i class="material-icons">
                   dashboard
                 </i>
-                <p>Dashboard</p>
+                <p>Painel Inicial</p>
               </a>
             </li>
+            {% if p_admin_events %}
+              <li {% if nav_active == "events" %} class="active dropdown" {% else %}  class="dropdown" {% endif %}>
+                <a href="{{ base_url }}/admin/events" id="events-btn" class="dropdown-toggle" data-toggle="collapse" data-target="#events-submenu" aria-expanded="false">
+                  <i class="material-icons">
+                    list
+                  </i>
+                  <p>Eventos</p>
+                </a>
 
+              </li>
+            {% endif %}
+
+             {% if p_admin_event_types %}
+              <li {% if nav_active == "event_types" %} class="active dropdown" {% else %}  class="dropdown" {% endif %}>
+                <a href="{{ base_url }}/admin/event_types" id="events-btn" class="dropdown-toggle" data-toggle="collapse" data-target="#events-submenu" aria-expanded="false">
+                  <i class="material-icons">
+                    assignment
+                  </i>
+                  <p>Tipos de Eventos</p>
+                </a>
+
+              </li>
+            {% endif %}
+
+            {% if p_admin_subscriptions %}
+              <li {% if nav_active == "subscriptions" %} class="active " {% else %}  {% endif %}>
+                <a href="{{ base_url }}/admin/subscriptions" id="subscriptions-btn" >
+                  <i class="material-icons">
+                    work
+                  </i>
+                  <p>Inscrições</p>
+                </a>
+
+              </li>
+            {% endif %}
+
+            {% if p_admin_attendances %}
+              <li {% if nav_active == "attendances" %} class="active " {% else %}  {% endif %}>
+                <a href="{{ base_url }}/admin/attendances" id="subscriptions-btn" >
+                  <i class="material-icons">
+                    done all
+                  </i>
+                  <p>Lista de Presença</p>
+                </a>
+
+              </li>
+            {% endif %}
+
+            {% if p_admin_certificates %}
+              <li {% if nav_active == "certificates" %} class="active " {% else %}  {% endif %}>
+                <a href="{{ base_url }}/admin/certificates" id="subscriptions-btn" >
+                  <i class="material-icons">
+                    done all
+                  </i>
+                  <p>Certificados</p>
+                </a>
+
+              </li>
+            {% endif %}
           </ul>
         </div>
       </div>
@@ -85,7 +143,9 @@
                     {% if p_admin_permission %}<li><a href="{{ base_url() }}/admin/permission">Permissões</a></li>
                     <li role="separator" class="divider"></li>
                     {% endif %}
-
+                    {% if p_admin_trash %}<li><a href="{{ base_url() }}/admin/trash">Lixeira</a></li>
+                    <li role="separator" class="divider"></li>
+                    {% endif %}
                     <li><a href="{{ base_url() }}">Voltar ao site</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a href="{{ base_url() }}/users/signout">Sair</a></li>

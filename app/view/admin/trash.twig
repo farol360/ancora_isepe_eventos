@@ -1,0 +1,74 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Isepe Eventos - {{ parent() }}
+{% endblock %}
+
+{% set nav_active = 'trash' %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url }}/admin">Início</a></li>
+  <li class="active">Lixeira</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  {# Purple header #}
+  <div class="card-header" data-background-color="purple">
+    <div class="row">
+      <div class="col-xs-12">
+        <h4 class="title">Lixeira de Eventos</h4>
+      </div>
+    </div>
+  </div>
+
+  {# Content of table #}
+  <div class="card-content table-responsive">
+    <table class="table">
+
+      {# Header of table #}
+      <thead class="text-primary">
+        <th> Imagem Destaque
+        </th>
+        <th>
+          Nome
+        </th>
+        <th>
+          Descrição
+        </th>
+        <th>
+          Preço
+        </th>
+        <th>
+          Data
+        </th>
+        <th>
+        </th>
+        <th>
+        </th>
+        <th>
+        </th>
+      </thead>
+
+      <tbody>
+        {% if events is not empty %}
+          {% for event in events %}
+            <tr>
+              <td style="width:200px;"><img src="{{ base_url() }}/{{ event.img_featured }}" style="max-width:100%;"></td>
+              <td>{{ event.name }}</td>
+              <td>{{ event.description }}</td>
+              <td>{{ event.price }}</td>
+              <td><p style="" >{{ event.date_event }}</p></td>
+              <td style="width: 100px;"><p><a class="btn btn-danger" href="{{ base_url() }}/admin/events/trash/remove/{{ event.id }}">Restaurar</a></p></td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <div class="alert alert-warning" role="alert">Não existem eventos na lixeira.</div>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

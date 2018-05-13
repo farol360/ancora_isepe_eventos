@@ -1,0 +1,73 @@
+{% extends "layout.twig" %}
+
+{% block content -%}
+<section class="blog-area section" style="padding-top:10px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12" style="margin-bottom: 1px;">
+        <ol class="breadcrumb" style="background-color: rgba(245, 245, 245, 0.53); text-align: left; margin-bottom: 1px;">
+          <li><a href="{{ base_url }}/">Início</a></li>
+          <li><a href="{{ base_url }}/users/profile">Meu Perfíl</a></li>
+          <li class="active">Minhas Inscrições</li>
+        </ol>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="card">
+        {# Purple header #}
+        <div class="card-header" data-background-color="purple">
+          <div class="row">
+            <div class="col-xs-12">
+              <h3 class="title">Minhas Inscrições:</h3>
+            </div>
+          </div>
+        </div>
+        {# Content of table #}
+        <div class="card-content table-responsive">
+          <table class="table" style="">
+
+            <tbody>
+              {% if subscriptions is not empty %}
+                {% for subscription in subscriptions %}
+                  <tr>
+
+                    <td><p style="font-size:medium;">{{ subscription.event_name }}</p> </td>
+                    <td><p style="font-size:medium;">{{ subscription.price }}</p></td>
+                    <td style="width: 150px;"> <p style="font-size:medium; padding: 5px; " {% if subscription.payd == 0  %} class="bg-info"  {% endif %} {% if subscription.payd == 1  %} class="bg-success"  {% endif %} {% if subscription.payd == 2  %} class="bg-warning"  {% endif %}>
+
+                                {% if subscription.payd == 0  %} Em Aberto  {% endif %}
+                                {% if subscription.payd == 1  %} Efetivado  {% endif %}
+                                {% if subscription.payd == 2  %} Não Efetivado  {% endif %}
+                        </p></td>
+
+
+                    {# TODO #}
+                    <td style="width: 100px;">
+
+                      <p><a style="margin-top:0px;" class="btn btn-success btn-certified" disabled>Certificado</a></p></td>
+                  </tr>
+                {% endfor %}
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+</section>
+
+
+{%- endblock %}
+{% block javascripts %} {{ parent()}}
+<script type="text/javascript">
+  $(document).ready( function(
+
+
+    ) {});
+</script>
+
+{% endblock %}

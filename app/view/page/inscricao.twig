@@ -1,0 +1,72 @@
+{% extends "layout.twig" %}
+{% set nav_active = 'inscricao' %}
+{% block content -%}
+<section class="blog-area section" style="padding-top:10px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12" style="margin-bottom: 1px;">
+        <ol class="breadcrumb" style="background-color: rgba(245, 245, 245, 0.53); text-align: left; margin-bottom: 1px;">
+          <li><a href="{{ base_url }}/">Início</a></li>
+          <li class="active">Inscrição</li>
+        </ol>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="card">
+        {# Purple header #}
+        <div class="card-header" data-background-color="purple">
+          <div class="row">
+            <div class="col-xs-12">
+              <h3 class="title">Inscriçao em Evento</h3>
+            </div>
+
+          </div>
+        </div>
+        {# Content of table #}
+        <div class="card-content table-responsive">
+          <form role="form" data-toggle="validator" action="{{ base_url() }}/inscricao/add" method="POST">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="inputName">Evento:</label>
+                  <input type="text" class="form-control" id="inputName" name="name" placeholder="Nome" value="{{ event.name }}" data-minlength="5" required disabled>
+                  <input type="hidden" value="{{ event.id }}" name="id_events">
+                </div>
+              </div>
+              <div class="col-sm-3 form-group">
+                <label for="inputNascimento">Data Limite inscrição</label>
+                <input type="date" class="form-control" id="inputNascimento" name="date_event" value="{{ event.date_event }}" disabled>
+              </div>
+              <div class="col-sm-2 form-group">
+                <label for="inputNascimento">Valor Inscrição</label>
+                <input type="text" class="form-control" id="inputNascimento" name="price" value="{{ event.price }}" disabled>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                 <div class="form-group">
+                  <label for="inputName">Usuário:</label>
+                  <input type="text" class="form-control" id="username" name="name" placeholder="Nome" value="{{ user.name }}" data-minlength="5" disabled>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <button class="btn btn-lg btn-success">Confirmar</button>
+                <a href="{{ base_url() }}/eventos/{{ event.id }}" class="btn btn-lg btn-default">Voltar</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+</section>
+
+
+{%- endblock %}
+{% block javascripts %} {{ parent()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+{% endblock %}
