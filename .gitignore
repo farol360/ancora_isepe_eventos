@@ -4,7 +4,6 @@
 /docs/
 /logs/
 /node_modules/
-/public_html/images
 /public_html/upload
 /vendor/
 .env
