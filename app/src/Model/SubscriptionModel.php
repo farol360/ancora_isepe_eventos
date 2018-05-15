@@ -146,13 +146,14 @@ class SubscriptionModel extends Model
                 subscriptions.*,
                 events.name as event_name,
                 events.price as event_price,
-                users.name as user_name
+                users.name as user_name,
+                users.email as user_email
             FROM
                 subscriptions
                 LEFT JOIN events ON subscriptions.id_event = events.id
                 LEFT JOIN users ON subscriptions.id_user = users.id
             WHERE
-                id_event = ?
+                subscriptions.id_event = ?
             ORDER BY
                 subscriptions.id DESC
             LIMIT ? , ?
@@ -257,6 +258,25 @@ class SubscriptionModel extends Model
         $stmt->execute();
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Subscription::class);
         return $stmt->fetch();
+    }
+
+    public function setWorkload(int $id_subcription, int $workload): bool
+    {
+        $sql = "
+            UPDATE
+                subscriptions
+            SET
+
+                workload = :workload
+            WHERE
+                id = :id_subcription
+        ";
+        $stmt = $this->db->prepare($sql);
+        $parameters = [
+          ':id_subcription'  => $id_subcription,
+          ':workload'     => $workload
+          ];
+        return $stmt->execute($parameters);
     }
 
     public function update(Subscription $subscription): bool

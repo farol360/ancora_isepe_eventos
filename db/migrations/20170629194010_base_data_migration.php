@@ -46,6 +46,46 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 2,
             ],
             [
+                'resource' => '/admin/attendances',
+                'description' => 'Lista de presenças',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/attendances/:id',
+                'description' => 'Lista de presenças',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/attendances/activate/:id',
+                'description' => 'Lista de presenças',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/attendances/deactivate/:id',
+                'description' => 'Lista de presenças',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/attendances/open/:id',
+                'description' => 'Lista de presenças',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/attendances/export/:id',
+                'description' => 'Lista de presenças',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/attendances/import/:id',
+                'description' => 'Lista de presenças',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/attendances/update/:id',
+                'description' => 'Lista de presenças',
+                'role_id' => 2,
+            ],
+            [
                 'resource' => '/admin/events',
                 'description' => 'Eventos',
                 'role_id' => 2,

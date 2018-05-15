@@ -30,6 +30,9 @@ $app->group('/admin', function () {
         $this->get('/activate/{id:[0-9]+}', SubscriptionsAdmin::class . ':activate');
         $this->get('/deactivate/{id:[0-9]+}', SubscriptionsAdmin::class . ':deactivate');
         $this->get('/open/{id:[0-9]+}', SubscriptionsAdmin::class . ':open');
+        $this->get('/export/{id:[0-9]+}', SubscriptionsAdmin::class . ':export');
+        $this->map(['GET', 'POST'],'/import/{id:[0-9]+}', SubscriptionsAdmin::class . ':import');
+        $this->post('/update/{id:[0-9]+}', SubscriptionsAdmin::class . ':update');
     });
 
     $this->group('/certificates', function() {

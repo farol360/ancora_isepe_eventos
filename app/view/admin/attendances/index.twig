@@ -7,7 +7,7 @@
 {% block breadcrumbs %}
 <ol class="breadcrumb">
   <li><a href="{{ base_url }}/admin">Início</a></li>
-  <li><a href="{{ base_url }}/admin/subscriptions">Inscrições</a></li>
+  <li><a href="{{ base_url }}/admin/events">Eventos</a></li>
   <li class="active">Lista de Presença</li>
 </ol>
 {% endblock %}
@@ -27,84 +27,120 @@
   {# Content of table #}
   <div class="card-content table-responsive">
     <div class="row">
-      <div class="form-group">
-        <div class="col-xs-12 col-sm-4">
-          <label for="eventos">Evento:</label>
-          <select id="select-eventos" class="form-control">
-            {% for event in events if event.status == 1 %}
-              <option value="{{ event.id_events }}" {% if event.id_events == eventFeatured.id_events %} selected {% endif %}  >{{ event.name }}</option>
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-xs-12 col-sm-8 ">
+            <div class="form-group">
+              <label for="eventos">Evento:</label>
+              <select id="select-eventos" class="form-control">
+                {% for event in events if event.status == 1 %}
+                  <option value="{{ event.id }}" {% if event.id == eventFeatured.id %} selected {% endif %}  >{{ event.name }}</option>
 
-            {% endfor %}
-          </select>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4">
+            <div class="form-group">
+              <a id="filtrar" href="{{ base_url() }}/admin/attendances/{{ eventFeatured.id }}" class="btn btn-info">Filtrar</a>
+            </div>
+          </div>
         </div>
-        <div class="col-xs-12 col-sm-2">
-          <a id="filtrar" href="{{ base_url() }}/admin/attendances/{{ eventFeatured.id_events }}" class="btn btn-info">Filtrar</a>
-        </div>
-      <div class="form-group">
-        <div class="col-sm-offset-1 col-sm-5">
-
+        <div class="row">
+          <div class="col-sm-8">
+            <div class="form-group">
+              <p>Carga Horária do Evento:</p>
+              <h4>{{ eventFeatured.workload }} horas</h4>
+            </div>
+          </div>
         </div>
       </div>
+
+
+      <div class="col-sm-6 ">
+        <div class="row">
+          <form action="{{ base_url() }}/admin/attendances/import/{{ eventFeatured.id }}" method="POST"  enctype="multipart/form-data">
+
+
+              <button class="btn btn-info" type="submit">Importar Lista</button>
+              <input type="file" name="import" required style="display:inline;">
+
+          </form>
+        </div>
+        <div class="row">
+          <div class="">
+            <a href="{{ base_url() }}/admin/attendances/export/{{ eventFeatured.id }}" class="btn btn-success">Exportar Lista</a>
+          </div>
+        </div>
+
+
+      </div>
+
     </div>
-    {% if (subscriptions is not empty) and eventFeatured != null  %}
-      <table class="table">
+    {% if eventFeatured != null %}
+      <form action="{{ base_url() }}/admin/attendances/update/{{ eventFeatured.id }}" method="post">
 
-        {# Header of table #}
-        <thead class="text-primary">
-          <th>
-            Cód.
-          </th>
-          <th>
-            Usuário
-          </th>
-          <th>
-            Evento
-          </th>
-          <th>
-            Preço
-          </th>
-          <th>
-            Data Inscrição
-          </th>
-          <th>
-            Status
-          </th>
-          <th>
-          </th>
-          <th>
-          </th>
-        </thead>
+        <table class="table">
 
-        <tbody>
+          {# Header of table #}
+          <thead class="text-primary">
+            <th>
+              Cód.
+            </th>
+            <th>
+              Usuário
+            </th>
+            <th>
+              Evento
+            </th>
+            <th>
+              Preço
+            </th>
+            <th>
+              Data Inscrição
+            </th>
+            <th>
+              Status
+            </th>
+            <th>Carga Horária
+            </th>
 
-          {% for subscription in subscriptions %}
-            <tr>
-              <td>{{ subscription.id_subscription }}</td>
-              <td>{{ subscription.user_name }}</td>
-              <td>{{ subscription.event_name }}</td>
-              <td>{{ subscription.event_price }}</td>
-              <td><p style="" >{{ subscription.date_subscription }}</p></td>
-              <td style="width: 150px;"> <p style="font-size:medium; padding: 5px; " {% if subscription.payd == 0  %} class="bg-info"  {% endif %} {% if subscription.payd == 1  %} class="bg-success"  {% endif %} {% if subscription.payd == 2  %} class="bg-warning"  {% endif %}>
+          </thead>
 
-                                {% if subscription.payd == 0  %} Em Aberto  {% endif %}
-                                {% if subscription.payd == 1  %} Efetivado  {% endif %}
-                                {% if subscription.payd == 2  %} Não Efetivado  {% endif %}
-                        </p></td>
-              <td style="width: 150px;">
-                <a href="{{ base_url() }}/admin/subscriptions/activate/{{ subscription.id_subscription }}?event={{ eventFeatured.id_events }}" class="btn btn-success" style="margin-top: 2px;" {% if subscription.payd == 1  %} disabled  {% endif %}>OK</a>
-                <a href="{{ base_url() }}/admin/subscriptions/deactivate/{{ subscription.id_subscription }}?event={{ eventFeatured.id_events }}" class="btn btn-warning" style="margin-top: 2px;"  {% if subscription.payd == 2  %} disabled  {% endif %}>x</a>
-                <a href="{{ base_url() }}/admin/subscriptions/open/{{ subscription.id_subscription }}?event={{ eventFeatured.id_events }}" class="btn btn-info" style="margin-top: 2px;" {% if subscription.payd == 0  %} disabled  {% endif %}>0</a>
-              </td>
-              <td style="width: 15px;"><p><a class="btn btn-danger" href="{{ base_url() }}/admin/events/trash/send/{{ event.id_events }}" style="margin-top:2px;"><i class="material-icons" style="width: 15px;">delete forever</i></a></p></td>
-            </tr>
-          {% endfor %}
+          <tbody>
 
-        </tbody>
-      </table>
+            {% for subscription in subscriptions %}
+              <tr>
+                <td>{{ subscription.id }}</td>
+                <td>{{ subscription.user_name }}</td>
+                <td>{{ subscription.event_name }}</td>
+                <td>{{ subscription.event_price }}</td>
+                <td><p style="" >{{ subscription.created_at }}</p></td>
+                <td style="width: 150px;"> <p style="font-size:medium; padding: 5px; " {% if subscription.payd == 0  %} class="bg-info"  {% endif %} {% if subscription.payd == 1  %} class="bg-success"  {% endif %} {% if subscription.payd == 2  %} class="bg-warning"  {% endif %}>
+
+                                  {% if subscription.payd == 0  %} Em Aberto  {% endif %}
+                                  {% if subscription.payd == 1  %} Efetivado  {% endif %}
+                                  {% if subscription.payd == 2  %} Não Efetivado  {% endif %}
+                          </p></td>
+                <td style="width: 150px;">
+                  <input type="text" name="{{ subscription.id }}" value="{{ subscription.workload }}">
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+
+
+        </table>
+
+        <div class="row">
+          <button class="btn btn-info" style="float:right;">Atualizar Lista</button>
+        </div>
+      </form>
     {% else %}
       <div class="row">
         <div class="col-xs-12">
-          <div class="bg-warning" style="padding-top:10px; padding-bottom:10px; margin-top: 10px; text-align:center;">Escolha um evento com inscrições efetivadas.</div>
+          <div class="" style="padding-top:10px; padding-bottom:10px; margin-top: 10px; text-align:center;">Escolha um evento com inscrições efetivadas.</div>
         </div>
       </div>
 
@@ -132,15 +168,19 @@
 
 $(document).ready( function() {
 
+  var value = $('#select-eventos').val();
 
-
-});
-
-$('#select-eventos').change( function () {
-  var value = $(this).val();
-  console.log(value);
   $('#filtrar').attr('href', '{{ base_url() }}/admin/attendances/' + value);
+
+  $('#select-eventos').change( function () {
+
+    console.log(value);
+
+  });
+
 });
+
+
 
 </script>
 

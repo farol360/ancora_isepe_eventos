@@ -122,7 +122,8 @@ class EventModel extends Model
             $sql = "
                 SELECT
                     events.*,
-                    event_types.name AS event_type
+                    event_types.name AS event_type,
+                    event_types.id AS event_types_id
                 FROM
                     events
                     LEFT JOIN event_types ON event_types.id = events.id_event_type

@@ -10,6 +10,14 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Flash\Messages as FlashMessages;
 use Slim\Views\Twig as View;
 
+use Fusonic\SpreadsheetExport\Spreadsheet;
+use Fusonic\SpreadsheetExport\ColumnTypes\DateColumn;
+use Fusonic\SpreadsheetExport\ColumnTypes\NumericColumn;
+use Fusonic\SpreadsheetExport\ColumnTypes\TextColumn;
+use Fusonic\SpreadsheetExport\Writers\CsvWriter;
+
+use Port\Csv\CsvReader;
+
 use Farol360\Ancora\Model;
 use Farol360\Ancora\Model\EntityFactory;
 
@@ -131,16 +139,18 @@ class SubscriptionsController extends Controller
             $subscriptions = $this->subscriptionModel->getAllByEvent($eventId, $offset, $limit);
         }
 
-        var_dump($subscriptions);
-        die;
         // pagination controll;
         $amountPosts = $this->eventModel->getAmount();
         $amountPages = ceil($amountPosts->amount / $limit);
-        return $this->view->render($response, 'admin/attendances/index.twig', [
+
+        return $this->view->render($response, 'admin/attendances/index.twig',
+            [
             'amountPages'   => $amountPages,
-            'page' => $page,
+            'page'          => $page,
             'subscriptions' => $subscriptions,
-            'events'        => $events]);
+            'events'        => $events,
+            'eventFeatured' => $eventFeatured
+            ]);
 
     }
 
@@ -179,6 +189,102 @@ class SubscriptionsController extends Controller
             $url .= '/' . $params['event'];
         }
 
+        return $this->httpRedirect($request, $response, $url);
+    }
+
+    public function export(Request $request, Response $response, array $args)
+    {
+
+        $eventId = intval($args['id']);
+
+        $subscriptions = $this->subscriptionModel->getAllByEvent($eventId);
+
+        $export = new Spreadsheet();
+        $export->addColumn(new TextColumn('Participante'));
+        $export->addColumn(new TextColumn('Email'));
+        $export->addColumn(new DateColumn('Data do cadastro'));
+        $export->addColumn(new TextColumn('Evento'));
+        $export->addColumn(new TextColumn('Carga Horária'));
+
+        foreach ($subscriptions as $subscription) {
+            $export->addRow([
+                $subscription->user_name,
+                $subscription->user_email,
+                $subscription->created_at,
+                $subscription->event_name,
+                $subscription->workload,
+
+            ]);
+        }
+        $writer = new CsvWriter();
+        $writer->includeColumnHeaders = true;
+        // TODO: Refatorar para usar PSR-7
+        $export->download($writer, 'Lista-Inscricoes-' . time());
+    }
+
+    public function import(Request $request, Response $response, array $args)
+    {
+        $files = $request->getUploadedFiles();
+
+        if (!empty($files['import'])) {
+            $file = $files['import'];
+
+            if ($file->getError() === UPLOAD_ERR_OK) {
+                //verify allowed extensions
+                $filename = $file->getClientFilename();
+
+                // cabulous function
+                $filename = sprintf(
+                    '%s.%s',
+                    uniqid(),
+                    pathinfo($file->getClientFilename(), PATHINFO_EXTENSION)
+                );
+
+                // path to usr img
+                $path = 'upload/import/';
+
+                // move img to path
+                $file->moveTo($path . $filename);
+
+                $file = new \SplFileObject($path . $filename);
+
+                $delimiter = ';';
+                $enclosure = '"';
+                $escape = '\\';
+
+                $reader = new CsvReader($file, $delimiter, $enclosure, $escape);
+
+                // Tell the reader that the first row in the CSV file contains column headers
+                $reader->setHeaderRowNumber(0);
+
+                foreach ($reader as $key => $value) {
+                    var_dump($key);
+                    var_dump($value);
+                }
+
+                die;
+
+            }
+        }
+
+
+    }
+
+    public function update(Request $request, Response $response, array $args)
+    {
+
+        $eventFeaturedId = (int)$args['id'];
+
+        $data = $request->getParsedBody();
+
+        foreach ($data as $key => $value) {
+            $this->subscriptionModel->setWorkload((int)$key, (int)$value);
+        }
+
+
+        $url =  '/admin/attendances/' . $eventFeaturedId;
+
+        $this->flash->addMessage('info', "Cargas horárias atualizadas com sucesso.");
         return $this->httpRedirect($request, $response, $url);
     }
 }

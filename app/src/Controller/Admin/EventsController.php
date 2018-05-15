@@ -116,7 +116,6 @@ class EventsController extends Controller
         // add event on db
         $event->id = (int) $this->eventModel->add($event);
 
-
         // if has all ok in add on db
         if($event->id !== null) {
 
