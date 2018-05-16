@@ -174,6 +174,7 @@ $container['Farol360\Ancora\Controller\Admin\SubscriptionsController'] = functio
     return new Farol360\Ancora\Controller\Admin\SubscriptionsController(
         $c['view'],
         $c['flash'],
+        new Farol360\Ancora\Model\UserModel($c['db']),
         new Farol360\Ancora\Model\EventModel($c['db']),
         new Farol360\Ancora\Model\EventTypeModel($c['db']),
         new Farol360\Ancora\Model\SubscriptionModel($c['db']),

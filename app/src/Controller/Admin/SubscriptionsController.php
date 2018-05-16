@@ -21,14 +21,16 @@ use Farol360\Ancora\Model\EntityFactory;
 class SubscriptionsController extends Controller
 {
 
+    protected $userModel;
     protected $eventModel;
     protected $eventTypeModel;
     protected $subscriptionModel;
     protected $entityFactory;
 
-    public function __construct(View $view, FlashMessages $flash, Model $eventModel, Model $eventTypeModel, Model $subscriptionModel, EntityFactory $entityFactory) {
+    public function __construct(View $view, FlashMessages $flash, Model $userModel, Model $eventModel, Model $eventTypeModel, Model $subscriptionModel, EntityFactory $entityFactory) {
 
         parent::__construct($view, $flash);
+        $this->userModel = $userModel;
         $this->eventModel = $eventModel;
         $this->eventTypeModel = $eventTypeModel;
         $this->subscriptionModel = $subscriptionModel;
@@ -200,16 +202,17 @@ class SubscriptionsController extends Controller
 
         $spreadsheet = new Spreadsheet();
 
-        $spreadsheet->getActiveSheet()->setCellValue('B1','LISTA DE PRESENÇA');
-        $spreadsheet->getActiveSheet()->mergeCells('B1:C1');
-        $spreadsheet->getActiveSheet()->setCellValue('D1','EVENTO: '. $event->name );
-        $spreadsheet->getActiveSheet()->mergeCells('D1:F1');
+        $spreadsheet->getActiveSheet()->setCellValue('C1','LISTA DE PRESENÇA');
+        $spreadsheet->getActiveSheet()->mergeCells('C1:D1');
+        $spreadsheet->getActiveSheet()->setCellValue('E1','EVENTO: '. $event->name );
+        $spreadsheet->getActiveSheet()->mergeCells('E1:G1');
         $spreadsheet->getActiveSheet()->setCellValue('A2','ID Inscrição');
         $spreadsheet->getActiveSheet()->setCellValue('B2','Participante');
         $spreadsheet->getActiveSheet()->setCellValue('C2','Email');
         $spreadsheet->getActiveSheet()->setCellValue('D2','Data do cadastro');
         $spreadsheet->getActiveSheet()->setCellValue('E2','Evento');
-        $spreadsheet->getActiveSheet()->setCellValue('F2','Carga Horária');
+        $spreadsheet->getActiveSheet()->setCellValue('F2','E-ID');
+        $spreadsheet->getActiveSheet()->setCellValue('G2','Carga Horária');
 
         $i = 3;
         foreach ($subscriptions as $subscription) {
@@ -228,6 +231,9 @@ class SubscriptionsController extends Controller
                 $subscription->event_name );
 
             $spreadsheet->getActiveSheet()->setCellValue("F$i",
+                $eventId );
+
+            $spreadsheet->getActiveSheet()->setCellValue("G$i",
                 $subscription->workload );
 
             $i++;
@@ -245,19 +251,19 @@ class SubscriptionsController extends Controller
             ],
         ];
 
-        $spreadsheet->getActiveSheet()->getStyle('B1')->applyFromArray($styleTitle);
+        $spreadsheet->getActiveSheet()->getStyle('C1')->applyFromArray($styleTitle);
 
         $styleEventName = [
             'font' => [
                 'size' => 14,
             ],
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP,
             ],
         ];
 
-        $spreadsheet->getActiveSheet()->getStyle('D1')->applyFromArray($styleEventName  );
+        $spreadsheet->getActiveSheet()->getStyle('E1')->applyFromArray($styleEventName  );
 
         $styleHeader = [
             'fill' => [
@@ -268,7 +274,7 @@ class SubscriptionsController extends Controller
             ],
         ];
 
-        $spreadsheet->getActiveSheet()->getStyle('A1:F1')->applyFromArray($styleHeader);
+        $spreadsheet->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleHeader);
 
         $styleArray = [
             'font' => [
@@ -286,7 +292,7 @@ class SubscriptionsController extends Controller
                 ]
             ],
         ];
-        $spreadsheet->getActiveSheet()->getStyle('A2:F2')->applyFromArray($styleArray);
+        $spreadsheet->getActiveSheet()->getStyle('A2:G2')->applyFromArray($styleArray);
 
         $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
 
@@ -298,9 +304,9 @@ class SubscriptionsController extends Controller
             'protection' => ['locked' => \PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_UNPROTECTED],
         ];
 
-        $spreadsheet->getActiveSheet()->getStyle("A3:E$i")->applyFromArray($lockedCells);
+        $spreadsheet->getActiveSheet()->getStyle("A3:F$i")->applyFromArray($lockedCells);
 
-        $spreadsheet->getActiveSheet()->getStyle("F3:F$i")->applyFromArray($unlockedCells);
+        $spreadsheet->getActiveSheet()->getStyle("G3:G$i")->applyFromArray($unlockedCells);
 
         $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
         $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
@@ -308,6 +314,7 @@ class SubscriptionsController extends Controller
         $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
         $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
         $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
 
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(50);
 
@@ -341,6 +348,8 @@ class SubscriptionsController extends Controller
 
     public function import(Request $request, Response $response, array $args)
     {
+
+        $eventFeaturedId = (int)$args['id'];
         $files = $request->getUploadedFiles();
 
         if (!empty($files['import'])) {
@@ -367,31 +376,36 @@ class SubscriptionsController extends Controller
                 // spreadsheet logic
                 $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($path . $filename);
 
-               $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+               $sheetData = $spreadsheet->getActiveSheet()->toArray(   null, true, true, true);
+                foreach ($sheetData as $key => $value) {
+                    if ( ($key > 2) and ($value['C'] != null ) ) {
+                        $subscriptions[$key]->id = $value['A'];
+                        $subscriptions[$key]->user_name = $value['B'];
+                        $subscriptions[$key]->user_email = $value['C'];
+                        $subscriptions[$key]->id_user = $this->userModel->getByEmail($value['C'])->id;
+                        $subscriptions[$key]->created_at = $value['D'];
+                        $subscriptions[$key]->event_name = $value['E'];
+                        $subscriptions[$key]->id_event = $value['F'];
+                        $subscriptions[$key]->workload = $value['G'];
 
 
-               $i = 1;
-               foreach ($sheetData as $key => $value) {
-                    if ($key > 1) {
-                        $subscription[$i]->id = $value['A'];
-                        $subscription[$i]->user_name = $value['B'];
-                        $subscription[$i]->user_email = $value['C'];
-                        $subscription[$i]->created_at = $value['D'];
-                        $subscription[$i]->event_name = $value['E'];
-                        $subscription[$i]->workload = $value['F'];
-
-                        $i++;
-                        var_dump($subscription);
                     }
 
                }
 
-                var_dump($sheetData);
+               // update db
+               foreach ($subscriptions as $subscription) {
 
-                unlink($path . $filename);
+                   $subscription = $this->entityFactory->createSubscription((array) $subscription);
+
+                   $this->subscriptionModel->update($subscription);
+               }
 
 
+                $this->flash->addMessage('info', "Cargas horárias importadas com sucesso.");
 
+                $url =  '/admin/attendances/' . $eventFeaturedId;
+                return $this->httpRedirect($request, $response, $url);
             }
         }
 
