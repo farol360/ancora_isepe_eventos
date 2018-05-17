@@ -110,8 +110,8 @@ class SubscriptionsController extends Controller
             $eventId = intval($args['id']);
             $eventFeatured = $this->eventModel->get($eventId);
         } else {
-            $eventId = 0;
             $eventFeatured = $this->eventModel->get();
+            $eventId = (int)$eventFeatured->id;
         }
 
         // get params

@@ -17,16 +17,18 @@
               <div class="single-post post-style-2">
                 <div class="row">
                   <div class="col-xs-12 col-sm-5">
-                    <img src="{{ base_url() }}/{{ event.img_featured }}" style="padding: 7px;">
+                    <img src="{{ base_url() }}/{{ event.img_featured }}" style="padding: 10px;">
                   </div>
                   <div class="col-xs-12 col-sm-7">
 
+                    <h4 class="pre-title"><a href="{{ base_url() }}/eventos/{{ event.id }}">{{ event.name }}</a></h4>
 
-                    <h6 class="pre-title"><a href="{{ base_url() }}/eventos/categorias/{{ event.id_event_type }}">{{ event.event_type }}</a></h6>
+                    <p class="title"><a href="{{ base_url() }}/eventos/categorias/{{ event.id_event_type }}">{{ event.event_type }}</a></p>
 
-                    <h4 class="title"><a href="{{ base_url() }}/eventos/{{ event.id }}">{{ event.name }}</a></h4>
 
-                    <p>{{ event.description }}</p>
+                    <p>Data(s): {{ event.date_event_description }}</p>
+                    <p> Inscrições até: {{ event.date_event }}</p>
+                    <p></p>
                     <a href="{{ base_url() }}/eventos/{{ event.id }}" class="btn btn-lg btn-info">Detalhes</a>
 
                   </div>

@@ -128,6 +128,11 @@ class PageController extends Controller
 
         foreach ($events as $event) {
             $event->event_type = $this->eventTypeModel->get((int) $event->id_event_type)->name;
+            $event_date_array = explode('-', $event->date_event);
+            $year = $event_date_array['0'];
+            $month = $event_date_array['1'];
+            $day = $event_date_array['2'];
+            $event->date_event = "$day-$month-$year";
         }
 
 
