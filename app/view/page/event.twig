@@ -46,8 +46,8 @@
               </div>
               <div class="row">
                 <div class=" col-sm-4 form-group">
-                  <label>Data Evento:</label>
-                  <input type="date" style="font-size:medium;" name="date_event"  class="form-control" value="{{ event.date_event }}"> </input>
+                  <label>Data Limite Inscrição:</label>
+                  <input type="date" style="font-size:medium;" name="date_event"  class="form-control" value="{{ event.date_event }}" disabled> </input>
                 </div>
                 <div class="col-sm-4 form-group">
                   <label for="price">Valor Inscrição</label>
@@ -59,11 +59,18 @@
                 </div>
 
               </div>
+               <div class="row">
+                <div class="col-xs-12 col-sm-11 form-group">
+                  <label >Data(s)</label>
+                  <p>{{ event.date_event_description }}</p>
+
+                </div>
+              </div>
               <div class="row">
                 <div class="col-xs-12 col-sm-11 form-group">
                   <label>Detalhes</label>
                   <div id="description" class="form-control" style="height:auto;"></div>
-                  <input type="hidden" name="agree_terms" id="description_hidden" value="{{ event.description }}">
+                  <input type="hidden" name="description" id="description_hidden" value="{{ event.description }}">
                 </div>
               </div>
 

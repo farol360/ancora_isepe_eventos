@@ -15,6 +15,7 @@ class EventModel extends Model
             img_featured,
             id_event_type,
             date_event,
+            date_event_description,
             description,
             price,
             status,
@@ -27,6 +28,7 @@ class EventModel extends Model
             :img_featured,
             :id_event_type,
             :date_event,
+            :date_event_description,
             :description,
             :price,
             :status,
@@ -37,17 +39,18 @@ class EventModel extends Model
 
         $stmt = $this->db->prepare($sql);
         $parameters = [
-            ':name'             => $event->name,
-            ':img_featured'     => $event->img_featured,
-            ':id_event_type'    => $event->id_event_type,
-            ':date_event'       => $event->date_event,
-            ':description'      => $event->description,
-            ':price'            => $event->price,
-            ':status'           => $event->status,
-            ':trash'            => $event->trash,
-            ':agree_terms'      => $event->agree_terms,
-            ':subscription_limit'=> $event->subscription_limit,
-            ':workload'         => $event->workload
+         ':name'             => $event->name,
+         ':img_featured'     => $event->img_featured,
+         ':id_event_type'    => $event->id_event_type,
+         ':date_event'       => $event->date_event,
+         ':date_event_description' => $event->date_event_description,
+         ':description'      => $event->description,
+         ':price'            => $event->price,
+         ':status'           => $event->status,
+         ':trash'            => $event->trash,
+         ':agree_terms'      => $event->agree_terms,
+         ':subscription_limit'=> $event->subscription_limit,
+         ':workload'         => $event->workload
         ];
 
         if ($stmt->execute($parameters)) {
@@ -328,6 +331,7 @@ class EventModel extends Model
                 img_featured    = :img_featured,
                 id_event_type   = :id_event_type,
                 date_event      = :date_event,
+                date_event_description = :date_event_description,
                 description     = :description,
                 price           = :price,
                 status          = :status,
@@ -340,20 +344,20 @@ class EventModel extends Model
         ";
         $stmt = $this->db->prepare($sql);
         $parameters =
-
         [
-            ':id'           => (int) $event->id,
-            ':name'         => $event->name,
-            ':img_featured' => $event->img_featured,
-            ':id_event_type'=> $event->id_event_type,
-            ':date_event'   => $event->date_event,
-            ':description'  => $event->description,
-            ':price'        => $event->price,
-            ':status'       => $event->status,
-            ':trash'        => $event->trash,
-            ':agree_terms'  => $event->agree_terms,
-            ':subscription_limit'  => $event->subscription_limit,
-            ':workload'    => $event->workload
+         ':id'           => (int) $event->id,
+         ':name'         => $event->name,
+         ':img_featured' => $event->img_featured,
+         ':id_event_type'=> $event->id_event_type,
+         ':date_event'   => $event->date_event,
+         ':date_event_description' => $event->date_event_description,
+         ':description'  => $event->description,
+         ':price'        => $event->price,
+         ':status'       => $event->status,
+         ':trash'        => $event->trash,
+         ':agree_terms'  => $event->agree_terms,
+         ':subscription_limit'  => $event->subscription_limit,
+         ':workload'    => $event->workload
         ];
         return $stmt->execute($parameters);
     }

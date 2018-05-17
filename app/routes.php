@@ -36,7 +36,8 @@ $app->group('/admin', function () {
     });
 
     $this->group('/certificates', function() {
-        $this->get('[/]', EventsAdmin::class . ':certificates' );
+        $this->get('[/]', SubscriptionsAdmin::class . ':certificates' );
+        $this->get('/{id:[0-9]+}', SubscriptionsAdmin::class . ':certificates');
     });
 
     $this->group('/events', function() {

@@ -1,0 +1,165 @@
+{% extends "admin/layout.twig" %}
+{% block html_title %}Isepe Eventos - {{ parent() }}
+{% endblock %}
+
+{% set nav_active = 'certificates' %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url }}/admin">Início</a></li>
+  <li><a href="{{ base_url }}/admin/events">Eventos</a></li>
+  <li class="active">Lista de Certificados</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  {# Purple header #}
+  <div class="card-header" data-background-color="purple">
+    <div class="row">
+      <div class="col-xs-12 col-sm-8">
+        <h4 class="title">Lista de Certificados</h4>
+      </div>
+    </div>
+  </div>
+
+  {# Content of table #}
+  <div class="card-content table-responsive">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="row">
+          <div class="col-xs-12 col-sm-8 ">
+            <div class="form-group">
+              <label for="eventos">Evento:</label>
+              <select id="select-eventos" class="form-control">
+                {% for event in events if event.status == 1 %}
+                  <option value="{{ event.id }}" {% if event.id == eventFeatured.id %} selected {% endif %}  >{{ event.name }}</option>
+
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4">
+            <div class="form-group">
+              <a id="filtrar" href="{{ base_url() }}/admin/attendances/{{ eventFeatured.id }}" class="btn btn-info">Filtrar</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="col-sm-4 ">
+
+        <div class="row">
+          <div class="form-group">
+            <label>Opções Certificados: </label>
+            <a href="{{ base_url() }}/admin/attendances/export/{{ eventFeatured.id }}" class="btn btn-info">Emitir para Todos</a>
+          </div>
+        </div>
+
+
+      </div>
+
+    </div>
+    {% if eventFeatured != null %}
+      <form action="{{ base_url() }}/admin/attendances/update/{{ eventFeatured.id }}" method="post">
+
+        <table class="table">
+
+          {# Header of table #}
+          <thead class="text-primary">
+            <th>
+              Cód.
+            </th>
+            <th>
+              Usuário
+            </th>
+            <th>
+              Evento
+            </th>
+            <th>
+              Data Emissão
+            </th>
+            <th>
+              Certificado
+            </th>
+
+
+            <th>Certificado
+            </th>
+
+          </thead>
+
+          <tbody>
+
+            {% for subscription in subscriptions %}
+              <tr>
+                <td>{{ subscription.id }}</td>
+                <td>{{ subscription.user_name }}</td>
+                <td>{{ subscription.event_name }}</td>
+                <td><p style="" >{{ subscription.date_certificate }}</p></td>
+                <td> {% if subscription.is_certificate == 0 %} <p class="text-danger">Não Emitido</p> {% endif %}
+                  {% if subscription.is_certificate == 1 %} <p class="text-success">Emitido</p> {% endif %}</td>
+                <td style="width: 150px;">
+                  <input type="hidden" name="id" value="{{ subscription.id }}">
+                  <button id="emit-certified" class="btn btn-success" >Emitir Certificado</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+
+
+
+        </table>
+
+      </form>
+    {% else %}
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="" style="padding-top:10px; padding-bottom:10px; margin-top: 10px; text-align:center;">Escolha um evento com inscrições efetivadas.</div>
+        </div>
+      </div>
+
+    {% endif %}
+    <div class="row">
+      <div class="col-xs-12">
+        <ul class="pager">
+          <li{% if page == 1 %} class="disabled"{% endif %}>
+            <a{% if page > 1 %} href="{{ base_url() }}/admin/attendances?page={{ page - 1 }}"{% endif %}>Anterior</a>
+          </li>
+          <li{% if page >= amountPages %} class="disabled"{% endif %}>
+            <a{% if page < amountPages %} href="{{ base_url() }}/admin/attendances?page={{ page + 1 }}"{% endif %}>Próximo</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+<script type="text/javascript">
+
+$(document).ready( function() {
+
+  var value = $('#select-eventos').val();
+
+  $('#filtrar').attr('href', '{{ base_url() }}/admin/attendances/' + value);
+
+  $('#select-eventos').change( function () {
+
+    console.log(value);
+
+  });
+
+});
+
+
+
+</script>
+
+{% endblock %}

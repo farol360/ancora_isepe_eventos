@@ -10,6 +10,7 @@ class Event
     public $img_featured;
     public $id_event_type;
     public $date_event;
+    public $date_event_description;
     public $description;
     public $price;
     public $status;
@@ -21,17 +22,18 @@ class Event
 
     public function __construct(array $data = [])
     {
-        $this->id               = $data['id'] ?? null;
-        $this->name             = $data['name'] ?? null;
-        $this->img_featured     = $data['img_featured'] ?? null;
-        $this->id_event_type    = $data['id_event_type'] ?? null;
-        $this->date_event       = $data['date_event'] ?? null;
-        $this->description      = $data['description'] ?? null;
-        $this->price            = $data['price'] ?? null;
-        $this->status           = $data['status'] ?? null;
-        $this->trash            = $data['trash'] ?? null;
-        $this->agree_terms      = $data['agree_terms'] ?? null;
-        $this->subscription_limit = $data['subscription_limit'] ?? null;
-        $this->workload         = $data['workload'] ?? null;
-    }
+    $this->id               = $data['id'] ?? null;
+    $this->name             = $data['name'] ?? null;
+    $this->img_featured     = $data['img_featured'] ?? null;
+    $this->id_event_type    = $data['id_event_type'] ?? null;
+    $this->date_event       = $data['date_event'] ?? null;
+    $this->date_event_description = $data['date_event_description'] ?? null;
+    $this->description      = $data['description'] ?? null;
+    $this->price            = $data['price'] ?? null;
+    $this->status           = $data['status'] ?? null;
+    $this->trash            = $data['trash'] ?? null;
+    $this->agree_terms      = $data['agree_terms'] ?? null;
+    $this->subscription_limit = $data['subscription_limit'] ?? null;
+    $this->workload         = $data['workload'] ?? null;
+}
 }

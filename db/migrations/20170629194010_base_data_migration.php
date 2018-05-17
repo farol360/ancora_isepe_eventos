@@ -86,6 +86,16 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 2,
             ],
             [
+                'resource' => '/admin/certificates/',
+                'description' => 'Lista de certificados',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/certificates/:id',
+                'description' => 'Lista de certificados',
+                'role_id' => 2,
+            ],
+            [
                 'resource' => '/admin/events',
                 'description' => 'Eventos',
                 'role_id' => 2,

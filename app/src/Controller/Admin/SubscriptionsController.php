@@ -153,6 +153,55 @@ class SubscriptionsController extends Controller
 
     }
 
+    public function certificates(Request $request, Response $response): Response
+    {
+
+        if (isset($args['id'])) {
+            $eventId = intval($args['id']);
+            $eventFeatured = $this->eventModel->get($eventId);
+        } else {
+            $eventId = 0;
+            $eventFeatured = $this->eventModel->get();
+        }
+
+        // get params
+        $params = $request->getQueryParams();
+
+        // pagination params
+        if (!empty($params['page'])) {
+            $page = intval($params['page']);
+        } else {
+            $page = 1;
+        }
+        $limit = 20;
+        $offset = ($page - 1) * $limit;
+
+        // list of events and types
+        $trash = 0;
+
+        $events = $this->eventModel->getAllPublished();
+        $eventsType = $this->eventTypeModel->getAll();
+
+        if ($eventId == 0) {
+            $subscriptions = $this->subscriptionModel->getAll($offset, $limit);
+        } else {
+            $subscriptions = $this->subscriptionModel->getAllByEvent($eventId, $offset, $limit);
+        }
+
+        // pagination controll;
+        $amountPosts = $this->eventModel->getAmount();
+        $amountPages = ceil($amountPosts->amount / $limit);
+
+        return $this->view->render($response, 'admin/certificate/index.twig',
+            [
+            'amountPages'   => $amountPages,
+            'page'          => $page,
+            'subscriptions' => $subscriptions,
+            'events'        => $events,
+            'eventFeatured' => $eventFeatured
+            ]);
+    }
+
     public function deactivate(Request $request, Response $response, array $args): Response
     {
         $subscriptionId = intval($args['id']);

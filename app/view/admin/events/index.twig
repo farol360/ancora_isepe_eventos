@@ -45,7 +45,7 @@
         <th>Nome</th>
         <th>Tipo</th>
         <th>Preço</th>
-        <th>Data</th>
+        <th>Data Inscrição</th>
         <th>Carga Horaria</th>
         <th></th>
         <th></th>
@@ -56,7 +56,7 @@
         {% if events is not empty %}
           {% for event in events %}
             <tr>
-              <td>{{ event.id_events }}</td>
+              <td>{{ event.id }}</td>
               <td style="width:150px;"><img src="{{ base_url() }}/{{ event.img_featured }}" style="max-width:100%;"></td>
               <td>{{ event.name }}</td>
               <td>{{ event.event_type }}</td>

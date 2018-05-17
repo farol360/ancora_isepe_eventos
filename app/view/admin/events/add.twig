@@ -59,7 +59,7 @@
               </div>
 
               <div class="row">
-                <div class="col-sm-9">
+                <div class="col-sm-9 form-group">
                   <!-- TODO: if need to work with temporary event in future !-->
                   <input id="id" type="hidden" name="id" value="{{ event.id }}">
                   <!-- TODO END !-->
@@ -87,7 +87,7 @@
 
                   <!-- date_event !-->
                   <div class="form-group">
-                    <label for="date_event">Data do Evento:</label>
+                    <label for="date_event">Data Limite Inscrição:</label>
                     <input class="form-control " type="date" name="date_event" id="date_event" value="{{ event.date_event }}" required>
                   </div>
                   <!-- date_event END !-->
@@ -100,6 +100,15 @@
                     <input class="form-control" type="text" name="price" id="price" value="{{ event.price }}" placeholder="R$ 0,00" required>
                   </div>
                   <!-- price END !-->
+                </div>
+              </div>
+               <div class="row">
+                <div class="col-sm-12 form-group">
+
+                  <!-- description !-->
+                  <label for="date_event_description">Data(s) do Evento:</label>
+                  <input class="form-control" rows="1" name="date_event_description" placeholder="XX de Mês Padrão de 2018." value="{{ event.date_event_description }}" required>
+                  <!-- description END !-->
                 </div>
               </div>
               <div class="row">

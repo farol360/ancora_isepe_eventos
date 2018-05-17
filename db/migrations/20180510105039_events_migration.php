@@ -32,6 +32,7 @@ class EventsMigration extends AbstractMigration
         $events->addColumn('img_featured', 'string');
         $events->addColumn('id_event_type', 'integer');
         $events->addColumn('date_event', 'date');
+        $events->addColumn('date_event_description', 'string');
         $events->addColumn('description', 'string');
         $events->addColumn('price', 'string');
         $events->addColumn('status', 'integer');

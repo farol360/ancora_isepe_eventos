@@ -37,10 +37,10 @@
                     <select id="id_event_type" name="id_event_type" class="form-control" >
                       {% set i = 1 %}
                       {% for eventsType in eventsTypes %}
-                        {% if eventsType.id_event_type == event.id_event_type %}
-                          <option name="{{ eventsType.id_event_type }}" selected="selected" value="{{ eventsType.id_event_type }}" >{{ eventsType.name }}</option>
+                        {% if eventsType.id == event.id_event_type %}
+                          <option name="{{ eventsType.id_event_type }}" selected="selected" value="{{ eventsType.id }}" >{{ eventsType.name }}</option>
                         {% else %}
-                          <option name="{{ eventsType.id_event_type }}" value="{{ eventsType.id_event_type }}">{{ eventsType.name }}</option>
+                          <option name="{{ eventsType.id }}" value="{{ eventsType.id }}">{{ eventsType.name }}</option>
                         {% endif %}
                         {% set i = i + 1 %}
                       {% endfor %}
@@ -85,7 +85,7 @@
 
                   <!-- date_event !-->
                   <div class="form-group">
-                    <label for="date_event">Data Evento:</label>
+                    <label for="date_event">Data Limite Inscrição:</label>
                     <input class="form-control " type="date" name="date_event" id="date_event" value="{{ event.date_event }}">
                   </div>
                   <!-- date_event END !-->
@@ -98,6 +98,15 @@
                     <input class="form-control " type="text" name="price" id="price" value="{{ event.price }}" placeholder="R$ 0,00">
                   </div>
                   <!-- price END !-->
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 form-group">
+
+                  <!-- description !-->
+                  <label for="date_event_description">Data(s) do Evento:</label>
+                  <input class="form-control" rows="1" name="date_event_description" placeholder="XX de Mês Padrão de 2018." value="{{ event.date_event_description }}" required>
+                  <!-- description END !-->
                 </div>
               </div>
               <div class="row">
