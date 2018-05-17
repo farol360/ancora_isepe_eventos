@@ -40,11 +40,11 @@ class SubscriptionsController extends Controller
     public function index(Request $request, Response $response, array $args): Response
     {
 
-        if (isset($args)) {
-            $eventId = intval($args['id']);
+        $eventId = intval($args['id']);
+
+        if ($eventId > 0) {
             $eventFeatured = $this->eventModel->get($eventId);
         } else {
-            $eventId = 0;
             $eventFeatured = null;
         }
 

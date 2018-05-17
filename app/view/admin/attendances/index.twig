@@ -173,8 +173,8 @@ $(document).ready( function() {
   $('#filtrar').attr('href', '{{ base_url() }}/admin/attendances/' + value);
 
   $('#select-eventos').change( function () {
-
-    console.log(value);
+    value = $('#select-eventos').val();
+    $('#filtrar').attr('href', '{{ base_url() }}/admin/attendances/' + value);
 
   });
 

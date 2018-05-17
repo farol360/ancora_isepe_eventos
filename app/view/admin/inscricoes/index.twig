@@ -30,7 +30,7 @@
         <div class="col-xs-12 col-sm-4">
           <label for="eventos">Evento:</label>
           <select id="select-eventos" class="form-control">
-            <option {% if eventFeatured == null %} selected {% endif %}>Todos os Eventos</option>
+            <option {% if eventFeatured == null %} selected {% endif %} value="0">Todos os Eventos</option>
 
             {% for event in events if event.status == 1 %}
               <option value="{{ event.id }}" {% if event.id == eventFeatured.id %} selected {% endif %}  >{{ event.name }}</option>
