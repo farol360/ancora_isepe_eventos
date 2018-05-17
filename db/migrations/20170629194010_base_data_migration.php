@@ -96,6 +96,21 @@ class BaseDataMigration extends AbstractMigration
                 'role_id' => 2,
             ],
             [
+                'resource' => '/admin/certificates/emit/all/:id',
+                'description' => 'Emitir certificados para todos de um evento.',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/certificates/emit/one/:id',
+                'description' => 'Emitir para uma única inscrição.',
+                'role_id' => 2,
+            ],
+            [
+                'resource' => '/admin/certificates/verify_attendances/:id',
+                'description' => 'Emitir para uma única inscrição.',
+                'role_id' => 2,
+            ],
+            [
                 'resource' => '/admin/events',
                 'description' => 'Eventos',
                 'role_id' => 2,

@@ -55,7 +55,7 @@
         <div class="row">
           <div class="form-group">
             <label>Opções Certificados: </label>
-            <a href="{{ base_url() }}/admin/attendances/export/{{ eventFeatured.id }}" class="btn btn-info">Emitir para Todos</a>
+            <button id="emit-all"  class="btn btn-info">Emitir para Todos</button>
           </div>
         </div>
 
@@ -64,57 +64,50 @@
 
     </div>
     {% if eventFeatured != null %}
-      <form action="{{ base_url() }}/admin/attendances/update/{{ eventFeatured.id }}" method="post">
+      <table class="table">
 
-        <table class="table">
-
-          {# Header of table #}
-          <thead class="text-primary">
-            <th>
-              Cód.
-            </th>
-            <th>
-              Usuário
-            </th>
-            <th>
-              Evento
-            </th>
-            <th>
-              Data Emissão
-            </th>
-            <th>
-              Certificado
-            </th>
+        {# Header of table #}
+        <thead class="text-primary">
+          <th>
+            Cód.
+          </th>
+          <th>
+            Usuário
+          </th>
+          <th>
+            Evento
+          </th>
+          <th>
+            Data Emissão
+          </th>
+          <th>
+            Certificado
+          </th>
 
 
-            <th>Certificado
-            </th>
+          <th>Certificado
+          </th>
 
-          </thead>
+        </thead>
 
-          <tbody>
+        <tbody>
 
-            {% for subscription in subscriptions %}
-              <tr>
-                <td>{{ subscription.id }}</td>
-                <td>{{ subscription.user_name }}</td>
-                <td>{{ subscription.event_name }}</td>
-                <td><p style="" >{{ subscription.date_certificate }}</p></td>
-                <td> {% if subscription.is_certificate == 0 %} <p class="text-danger">Não Emitido</p> {% endif %}
-                  {% if subscription.is_certificate == 1 %} <p class="text-success">Emitido</p> {% endif %}</td>
-                <td style="width: 150px;">
-                  <input type="hidden" name="id" value="{{ subscription.id }}">
-                  <button id="emit-certified" class="btn btn-success" >Emitir Certificado</button>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-
-
-
-        </table>
-
-      </form>
+          {% for subscription in subscriptions %}
+            <tr>
+              <td>{{ subscription.id }}</td>
+              <td>{{ subscription.user_name }}</td>
+              <td>{{ subscription.event_name }}</td>
+              <td><p style="" >{{ subscription.date_certificate }}</p></td>
+              <td> {% if subscription.is_certificate == 0 %} <p class="text-danger">Não Emitido</p> {% endif %}
+                {% if subscription.is_certificate == 1 %} <p class="text-success">Emitido</p> {% endif %}</td>
+              <td style="width: 150px;">
+                <input type="hidden" name="id" value="{{ subscription.id }}">
+                <button id="emit-certified" class="btn btn-success" >Emitir Certificado</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     {% else %}
       <div class="row">
         <div class="col-xs-12">
@@ -148,17 +141,30 @@ $(document).ready( function() {
 
   var value = $('#select-eventos').val();
 
-  $('#filtrar').attr('href', '{{ base_url() }}/admin/attendances/' + value);
+  $('#filtrar').attr('href', '{{ base_url() }}/admin/certificates/' + value);
 
   $('#select-eventos').change( function () {
+  value = $('#select-eventos').val();
+    $('#filtrar').attr('href', '{{ base_url() }}/admin/certificates/' + value);
 
-    console.log(value);
 
   });
 
 });
 
+$('#emit-all').click(function() {
 
+
+
+  $.ajax({
+    url: {{ base_url() }} + '/admin/certificates/verify_attendances/' + {{ eventFeatured.id }},
+
+    success: function (result) {
+      console.log(result);
+    }
+  });
+
+} );
 
 </script>
 

@@ -38,6 +38,9 @@ $app->group('/admin', function () {
     $this->group('/certificates', function() {
         $this->get('[/]', SubscriptionsAdmin::class . ':certificates' );
         $this->get('/{id:[0-9]+}', SubscriptionsAdmin::class . ':certificates');
+        $this->get('emit/all/{id:[0-9]+}', SubscriptionsAdmin::class . ':certificates_emit_all');
+        $this->get('emit/one/{id:[0-9]+}', SubscriptionsAdmin::class . ':certificates_emit_one');
+        $this->get('verify_attendances/{id:[0-9]+}', SubscriptionsAdmin::class . ':verify_attendances');
     });
 
     $this->group('/events', function() {

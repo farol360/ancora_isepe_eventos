@@ -153,15 +153,15 @@ class SubscriptionsController extends Controller
 
     }
 
-    public function certificates(Request $request, Response $response): Response
+    public function certificates(Request $request, Response $response, array $args): Response
     {
 
         if (isset($args['id'])) {
             $eventId = intval($args['id']);
             $eventFeatured = $this->eventModel->get($eventId);
         } else {
-            $eventId = 0;
             $eventFeatured = $this->eventModel->get();
+            $eventId = (int)$eventFeatured->id;
         }
 
         // get params
@@ -200,6 +200,11 @@ class SubscriptionsController extends Controller
             'events'        => $events,
             'eventFeatured' => $eventFeatured
             ]);
+    }
+
+    public function certificates_emit_all(Request $request, Response $response, array $args)
+    {
+        $eventId = intval($args['id']);
     }
 
     public function deactivate(Request $request, Response $response, array $args): Response
@@ -253,17 +258,19 @@ class SubscriptionsController extends Controller
 
         $spreadsheet->getActiveSheet()->setCellValue('C1','LISTA DE PRESENÇA');
         $spreadsheet->getActiveSheet()->mergeCells('C1:D1');
-        $spreadsheet->getActiveSheet()->setCellValue('E1','EVENTO: '. $event->name );
-        $spreadsheet->getActiveSheet()->mergeCells('E1:G1');
-        $spreadsheet->getActiveSheet()->setCellValue('A2','ID Inscrição');
-        $spreadsheet->getActiveSheet()->setCellValue('B2','Participante');
-        $spreadsheet->getActiveSheet()->setCellValue('C2','Email');
-        $spreadsheet->getActiveSheet()->setCellValue('D2','Data do cadastro');
-        $spreadsheet->getActiveSheet()->setCellValue('E2','Evento');
-        $spreadsheet->getActiveSheet()->setCellValue('F2','E-ID');
-        $spreadsheet->getActiveSheet()->setCellValue('G2','Carga Horária');
+        $spreadsheet->getActiveSheet()->setCellValue('A2','EVENTO: '. $event->name );
+        $spreadsheet->getActiveSheet()->mergeCells('A2:D2');
+        $spreadsheet->getActiveSheet()->setCellValue('E2','CARGA HORÁRIA: '. $event->workload . ' HORAS');
+        $spreadsheet->getActiveSheet()->mergeCells('E2:G2');
+        $spreadsheet->getActiveSheet()->setCellValue('A3','ID Inscrição');
+        $spreadsheet->getActiveSheet()->setCellValue('B3','Participante');
+        $spreadsheet->getActiveSheet()->setCellValue('C3','Email');
+        $spreadsheet->getActiveSheet()->setCellValue('D3','Data do cadastro');
+        $spreadsheet->getActiveSheet()->setCellValue('E3','Evento');
+        $spreadsheet->getActiveSheet()->setCellValue('F3','E-ID');
+        $spreadsheet->getActiveSheet()->setCellValue('G3','Carga Horária');
 
-        $i = 3;
+        $i = 4;
         foreach ($subscriptions as $subscription) {
             $spreadsheet->getActiveSheet()->setCellValue("A$i",
                 $subscription->id );
@@ -295,7 +302,7 @@ class SubscriptionsController extends Controller
                 'size' => 18,
             ],
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
             ],
         ];
@@ -304,15 +311,28 @@ class SubscriptionsController extends Controller
 
         $styleEventName = [
             'font' => [
-                'size' => 14,
+                'size' => 12,
             ],
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+
             ],
         ];
 
-        $spreadsheet->getActiveSheet()->getStyle('E1')->applyFromArray($styleEventName  );
+        $spreadsheet->getActiveSheet()->getStyle('A2')->applyFromArray($styleEventName  );
+
+
+        $styleEventName = [
+            'font' => [
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+
+            ],
+        ];
+
+        $spreadsheet->getActiveSheet()->getStyle('E2')->applyFromArray($styleEventName  );
 
         $styleHeader = [
             'fill' => [
@@ -323,7 +343,7 @@ class SubscriptionsController extends Controller
             ],
         ];
 
-        $spreadsheet->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleHeader);
+        $spreadsheet->getActiveSheet()->getStyle('A1:G2')->applyFromArray($styleHeader);
 
         $styleArray = [
             'font' => [
@@ -341,7 +361,7 @@ class SubscriptionsController extends Controller
                 ]
             ],
         ];
-        $spreadsheet->getActiveSheet()->getStyle('A2:G2')->applyFromArray($styleArray);
+        $spreadsheet->getActiveSheet()->getStyle('A3:G3')->applyFromArray($styleArray);
 
         $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
 
@@ -427,7 +447,7 @@ class SubscriptionsController extends Controller
 
                $sheetData = $spreadsheet->getActiveSheet()->toArray(   null, true, true, true);
                 foreach ($sheetData as $key => $value) {
-                    if ( ($key > 2) and ($value['C'] != null ) ) {
+                    if ( ($key > 3) and ($value['C'] != null ) ) {
                         $subscriptions[$key]->id = $value['A'];
                         $subscriptions[$key]->user_name = $value['B'];
                         $subscriptions[$key]->user_email = $value['C'];
