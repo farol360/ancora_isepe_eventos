@@ -204,8 +204,102 @@ class SubscriptionsController extends Controller
 
     public function certificates_emit_all(Request $request, Response $response, array $args)
     {
-        $eventId = intval($args['id']);
+        $eventFeaturedId = (int)$args['id'];
+
+        $subscriptions = $this->subscriptionModel->getAllByEvent($eventFeaturedId);
+
+        foreach ($subscriptions as $subscription) {
+            if ($subscription->workload != null) {
+
+                // verify is_certified.
+                if (!$subscription->is_certificate) {
+
+                    $event = $this->eventModel->get((int)$subscription->id_event);
+
+                    $image_logo = 'images/certificates_logo.png';
+
+                    $html = "
+
+
+                    <div style='width: 20%; float: left;'>
+                        <img src='images/certificates_logo.png' style='width: 90%;'>
+
+                    </div>
+                    <div style='width: 80%; display: inline-block;'>
+                        <p style='margin-bottom:5px; ' >FACULDADE DE ENSINO SUPERIOR DE MARECHAL CÂNDIDO RONDON</p>
+                        <p style='margin-top:5px; '>Recredenciada pelo MEC através da Portaria 48 de 18/01/2017. Publicada no D.O.U. em 19/01/2017</p>
+                    </div>
+
+                    <hr>
+
+                    ";
+
+                    $mpdf = new \Mpdf\Mpdf(['format' => 'A4-L']);
+                    $mpdf->WriteHTML($html);
+
+                    //generate certified;
+
+                    /*
+                    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load('certificates/template.xls');
+
+                    $spreadsheet->getActiveSheet()->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+
+                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Logo');
+                    $drawing->setPath('images/certificates_logo.png');
+                    $drawing->setHeight(52);
+                    $drawing->setCoordinates('A1');
+                    $spreadsheet->getActiveSheet()->mergeCells('A1:B1');
+
+                    $drawing->setWorksheet($spreadsheet->getActiveSheet());
+
+                    $spreadsheet->getActiveSheet()->setCellValue('C1','FACULDADE DE ENSINO SUPERIOR DE MARECHAL CÂNDIDO RONDON');
+                    $spreadsheet->getActiveSheet()->setCellValue('C2','Recredenciada pelo MEC através da Portaria 48 de 18/01/2017. Publicada no D.O.U. em 19/01/2017');
+
+                    $spreadsheet->getActiveSheet()->mergeCells('C1:G1');
+                    $spreadsheet->getActiveSheet()->mergeCells('C2:G2');
+
+
+                    $spreadsheet->getActiveSheet()->setCellValue('A3','Certificado');
+                    $spreadsheet->getActiveSheet()->mergeCells('A3:G3');
+
+                    $styleCertificado = [
+                        'font' => [
+                            'size' => 28,
+                            'color' => ['argb' => \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE]
+                        ],
+                        'alignment' => [
+                            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+
+                        ],
+                    ];
+
+                    $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+
+                    $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+
+                    $spreadsheet->getActiveSheet()->getStyle('A3')->applyFromArray($styleCertificado);
+                    */
+
+                    $file_path = "certificates/";
+                    $file_name = $file_path . $subscription->id .'.pdf';
+
+
+
+                    // Saves file on the server as 'filename.pdf'
+                    $mpdf->Output($file_name, \Mpdf\Output\Destination::FILE);
+
+                }
+
+            }
+        }
+
+        return true;
     }
+
+
+
 
     public function deactivate(Request $request, Response $response, array $args): Response
     {
@@ -498,4 +592,28 @@ class SubscriptionsController extends Controller
         $this->flash->addMessage('info', "Cargas horárias atualizadas com sucesso.");
         return $this->httpRedirect($request, $response, $url);
     }
+    /*
+    public function verify_attendances(Request $request, Response $response, array $args)
+    {
+
+        $eventFeaturedId = (int)$args['id'];
+
+        $subscriptions = $this->subscriptionModel->getAllByEvent($eventFeaturedId);
+
+
+        //verify empty attendances
+        $i = 0;
+        $subscriptions_not_attendenced = null;
+        foreach ($subscriptions as $subscription) {
+            if ($subscription->workload == null) {
+                $subscriptions_not_attendenced[$i] = $subscription;
+                $i++;
+            } else {
+
+            }
+        }
+
+        return json_encode($subscriptions_not_attendenced);
+    }
+    */
 }

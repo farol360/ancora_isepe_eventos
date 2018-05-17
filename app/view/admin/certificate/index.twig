@@ -42,6 +42,8 @@
           </div>
           <div class="col-xs-12 col-sm-4">
             <div class="form-group">
+              <input type="hidden" id="base_url" name="base_url" value="{{ base_url() }}">
+              <input type="hidden" id="eventFeatured_id" name="eventFeatured_id" value="{{ eventFeatured.id }}">
               <a id="filtrar" href="{{ base_url() }}/admin/attendances/{{ eventFeatured.id }}" class="btn btn-info">Filtrar</a>
             </div>
           </div>
@@ -55,7 +57,7 @@
         <div class="row">
           <div class="form-group">
             <label>Opções Certificados: </label>
-            <button id="emit-all"  class="btn btn-info">Emitir para Todos</button>
+            <button id="emit-all"  class="btn btn-success" data-toggle="modal" data-target="#modal-certificates-all">Emitir Certificados</button>
           </div>
         </div>
 
@@ -81,7 +83,7 @@
             Data Emissão
           </th>
           <th>
-            Certificado
+            Carga Horária
           </th>
 
 
@@ -97,12 +99,20 @@
               <td>{{ subscription.id }}</td>
               <td>{{ subscription.user_name }}</td>
               <td>{{ subscription.event_name }}</td>
-              <td><p style="" >{{ subscription.date_certificate }}</p></td>
-              <td> {% if subscription.is_certificate == 0 %} <p class="text-danger">Não Emitido</p> {% endif %}
-                {% if subscription.is_certificate == 1 %} <p class="text-success">Emitido</p> {% endif %}</td>
+              <td>{% if  subscription.is_certificate == 1 %} {{ subscription.date_certificate }}
+                {% endif %}
+                {% if subscription.is_certificate == 0 %} <p class="text-danger">Não Emitido</p> {% endif %}</td>
+              <td> {% if subscription.workload == null %}
+                  <p class="text-danger">Não definido</p>
+                {% else %}
+               {{ subscription.workload }}</td>
+               {% endif %}
+              }
               <td style="width: 150px;">
                 <input type="hidden" name="id" value="{{ subscription.id }}">
-                <button id="emit-certified" class="btn btn-success" >Emitir Certificado</button>
+                {% if  subscription.is_certificate == 1 %} <a id="view-certified" href="{{ base_url() }}/admin/certificates/view/{{ subscription.id }}" class="btn btn-success" >Ver Certificado</a>
+                {% endif %}
+                {% if subscription.is_certificate == 0 %} <p class="text-danger">Não Emitido</p> {% endif %}
               </td>
             </tr>
           {% endfor %}
@@ -131,6 +141,21 @@
   </div>
 </div>
 
+
+<div id="modal-certificates-all" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Emissão de Certificados</h4>
+      </div>
+      <div id="modal-body" class="modal-body">
+        <p id="modal-body-text"></p>
+      </div>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 {% endblock %}
 
 {% block javascripts %}
@@ -154,14 +179,33 @@ $(document).ready( function() {
 
 $('#emit-all').click(function() {
 
-
+  var base_url = $("#base_url").val();
+  var eventFeatured_id = $("#eventFeatured_id").val();
 
   $.ajax({
-    url: {{ base_url() }} + '/admin/certificates/verify_attendances/' + {{ eventFeatured.id }},
+    url: base_url + '/admin/certificates/emit/all/' + eventFeatured_id,
+
+    beforeSend: function (data) {
+
+      $("#modal-body-text").html('Aguarde...');
+
+    },
 
     success: function (result) {
-      console.log(result);
+
+
+      $("#modal-body-text").html('Feito');
+
+
+    },
+
+    error: function (xhr,status,error) {
+      $("#modal-body-text").html(xhr +  " " + status );
+
+      console.log(xhr);
     }
+
+
   });
 
 } );
